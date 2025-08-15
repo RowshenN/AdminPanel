@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkadmin=self.webpackChunkadmin||[]).push([[6990],{6990:(e,d,r)=>{r.r(d),r.d(d,{default:()=>s});r(5043);var a=r(1688),n=(r(5561),r(579));const s=()=>{(0,a.W6)();return(0,n.jsx)("div",{children:'@Povered by "\xddyldyrym bady"'})}}}]);
+//# sourceMappingURL=6990.938d43de.chunk.js.map

@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: sfregular;
+  src: url(./fonts/SFPRODISPLAYREGULAR.OTF);
+}
+
+@font-face {
+  font-family: sfmedium;
+  src: url(./fonts/SFPRODISPLAYMEDIUM.OTF);
+}
+@font-face {
+  font-family: sfsemibold;
+  src: url(./fonts/SFPRODISPLAYSEMIBOLDITALIC.OTF);
+}
+@font-face {
+  font-family: sfbold;
+  src: url(./fonts/SFPRODISPLAYBOLD.OTF);
+}
+
+body {
+  margin: 0;
+  font-family: sfregular, sans-serif;
+  -webkit-font-smoothing: sfregular;
+  -moz-osx-font-smoothing: sfregular;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
