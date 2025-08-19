@@ -12,13 +12,9 @@ export const Streets = lazy(() => import("./streets/streets"));
 export const StreetsCreate = lazy(() => import("./streets/streetsCreate"));
 export const StreetsUpdate = lazy(() => import("./streets/streetsUpdate"));
 
-export const AutoMessage = lazy(() => import("./autoMessage/autoMessage"));
-export const AutoMessageCreate = lazy(() =>
-  import("./autoMessage/autoMessageCreate")
-);
-export const AutoMessageUpdate = lazy(() =>
-  import("./autoMessage/autoMessageUpdate")
-);
+export const About = lazy(() => import("./about/abouts"));
+export const AboutCreate = lazy(() => import("./about/aboutCrate"));
+export const AboutUpdate = lazy(() => import("./about/aboutUpdate"));
 
 export const MessageTemplate = lazy(() =>
   import("./messageTamplate/messageTemplate")

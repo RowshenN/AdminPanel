@@ -13,13 +13,6 @@ import {
   Users,
   Products,
   ProductsUpdate,
-  ReportTypes,
-  ReportTypesCreate,
-  ReportTypesUpdate,
-  ReportPosts,
-  ReportPostsUpdate,
-  ReportUsers,
-  ReportUsersUpdate,
   Admins,
   AdminsUpdate,
   AdminsCreate,
@@ -33,15 +26,15 @@ import {
   Streets,
   StreetsCreate,
   StreetsUpdate,
-  AutoMessage,
-  AutoMessageCreate,
-  AutoMessageUpdate,
   MessageTemplate,
   MessageTemplateCreate,
   MessageTemplateUpdate,
   MessageSend,
   MessageSendCreate,
   MessageSendUpdate,
+  About,
+  AboutCreate,
+  AboutUpdate,
 } from "../pages/index";
 
 import ScrollIntoView from "./ScrollIntoView";
@@ -124,20 +117,20 @@ const App = () => {
 
             <PrivateRoute
               restricted={true}
-              component={AutoMessage}
-              path="/autoMessage"
+              component={About}
+              path="/abouts"
               exact
             />
             <PrivateRoute
               restricted={true}
-              component={AutoMessageCreate}
-              path="/autoMessage/create"
+              component={AboutCreate}
+              path="/abouts/create"
               exact
             />
             <PrivateRoute
               restricted={true}
-              component={AutoMessageUpdate}
-              path="/autoMessage/:id"
+              component={AboutUpdate}
+              path="/abouts/:id"
               exact
             />
 

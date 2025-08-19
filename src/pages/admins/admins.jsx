@@ -50,10 +50,10 @@ const Admins = () => {
     return () => clearTimeout(time);
   }, [search]);
 
-  if (isLoading) return <PageLoading />;
-  if (error) {
-    return <div>Ýalňyşlyk boldy</div>;
-  }
+  // if (isLoading) return <PageLoading />;
+  // if (error) {
+  //   return <div>Ýalňyşlyk boldy</div>;
+  // }
   console.log("products", custumers);
 
   const selectItem = (id) => {
@@ -178,15 +178,15 @@ const Admins = () => {
           </h1>
 
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[35%] uppercase">
-            Wezipesi
+            Ulanyjy Familiýa
           </h1>
 
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[15%]   whitespace-nowrap uppercase">
-            Görnüşi
+            Telefon
           </h1>
 
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[25%]   whitespace-nowrap uppercase">
-            Message
+            Status
           </h1>
         </div>
 
@@ -208,27 +208,27 @@ const Admins = () => {
               </div> */}
 
               <h1 className="text-[14px] font-[500] text-black w-[25%] uppercase">
-                {item?.username}
+                {item?.name}
               </h1>
 
               <h1 className="text-[14px] font-[500] text-black w-[35%] uppercase">
-                {item?.position}
+                {item?.lastName}
               </h1>
 
               <h1 className="text-[14px] font-[500] text-black w-[15%]   whitespace-nowrap uppercase">
-                {item?.type}
+                {item?.phone}
               </h1>
               <h1 className="text-[14px] font-[500] text-black w-[25%] flex gap-2 justify-between  whitespace-nowrap uppercase">
                 {/* <div>{item?.can_message ? "Howa" : "Ýok"}</div> */}
 
                 <div
                   className={`bg-opacity-15 px-4 py-2 w-fit rounded-[12px] ${
-                    item?.can_message
+                    item?.active
                       ? "text-[#44CE62] px-[26px] bg-[#44CE62]"
                       : "text-red bg-red"
                   }  `}
                 >
-                  {item?.can_message ? "Howa" : "Ýok"}
+                  {item?.active ? "Howa" : "Ýok"}
                 </div>
                 <div
                   onClick={() =>

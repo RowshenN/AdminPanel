@@ -18,11 +18,11 @@ import { message } from "antd";
 const AdminsCreate = () => {
   const history = useHistory();
   const [user, setUser] = useState({
-    username: "",
+    name: "",
     password: "",
-    position: "",
-    type: "",
-    can_message: true,
+    lastName: "",
+    name: "",
+    active: true,
   });
 
   const [createAdmin] = useCreateAdminMutation();
@@ -55,9 +55,9 @@ const AdminsCreate = () => {
           <div className="w-[49%]">
             <h1 className="text-[16px] font-[500]">Ulanyjy ady</h1>
             <input
-              value={user?.username}
+              value={user?.name}
               onChange={(e) => {
-                setUser({ ...user, username: e.target.value });
+                setUser({ ...user, name: e.target.value });
               }}
               className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
               placeholder="Girizilmedik"
@@ -80,13 +80,13 @@ const AdminsCreate = () => {
 
         <div className="flex items-center   justify-between py-[15px]">
           <div className="w-[49%]">
-            <h1 className="text-[16px] font-[500]">Wezipesi</h1>
+            <h1 className="text-[16px] font-[500]"> Ulanyjy familýasy</h1>
             <input
-              value={user?.position}
+              value={user?.lastName}
               onChange={(e) => {
                 setUser({
                   ...user,
-                  position: e.target.value,
+                  lastName: e.target.value,
                 });
               }}
               className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
@@ -95,35 +95,20 @@ const AdminsCreate = () => {
             />
           </div>
           <div className="w-[49%]">
-            <h1 className="text-[16px] font-[500]">Görnüşi</h1>
+            <h1 className="text-[16px] font-[500]">Telefon nomury</h1>
 
-            <Select
-              value={user?.type}
-              onChange={(e, newValue) => {
+            <input
+              value={user?.phone}
+              onChange={(e) => {
                 setUser({
                   ...user,
-                  type: newValue,
+                  phone: e.target.value,
                 });
               }}
-              placeholder="Hemmesini görkez"
-              className="text-[14px] w-full h-[47px] mt-1 text-black font-[400]  border-[1px] !bg-white !border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
-              indicator={<KeyboardArrowDown className="!text-[16px]" />}
-              sx={{
-                [`& .${selectClasses.indicator}`]: {
-                  transition: "0.2s",
-                  [`&.${selectClasses.expanded}`]: {
-                    transform: "rotate(-180deg)",
-                  },
-                },
-              }}
-            >
-              <Option key={"Erkek"} value={"admin"}>
-                Admin
-              </Option>
-              <Option key={"Aýal"} value={"developer"}>
-                Developer
-              </Option>
-            </Select>
+              className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
+              placeholder="Girizilmedik"
+              type="text"
+            />
           </div>
         </div>
 
@@ -131,17 +116,16 @@ const AdminsCreate = () => {
           <div className="w-[380px]">
             <h1 className="text-[18px] font-[500]">Status</h1>
             <p className="text-[14px] mt-2 font-[500] text-[#98A2B2]">
-              Message ugradyp ýa-da ugratmaýanlygyny kesgitlemek üçin status
-              düzüň
+              Admin ulanyjy hasaby üçin status düzüň
             </p>
           </div>
           <div className="flex justify-start w-[550px]">
             <Switch
-              checked={user.can_message == true ? true : false}
+              checked={user.active == true ? true : false}
               onChange={(event) =>
                 setUser({
                   ...user,
-                  can_message: event.target.checked ? true : false,
+                  active: event.target.checked ? true : false,
                 })
               }
             />

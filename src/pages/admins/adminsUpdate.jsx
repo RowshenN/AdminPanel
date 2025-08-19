@@ -42,10 +42,10 @@ const AdminsUpdate = () => {
     }
   }, [custumers]);
 
-  if (isLoading) return <PageLoading />;
-  if (error) {
-    return <div>Ýalňyşlyk boldy</div>;
-  }
+  // if (isLoading) return <PageLoading />;
+  // if (error) {
+  //   return <div>Ýalňyşlyk boldy</div>;
+  // }
   const createUser = async () => {
     try {
       let bodyData = {

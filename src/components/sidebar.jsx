@@ -323,100 +323,42 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
 
-          <ListItem
-            selected={
-              path?.pathname.includes("/autoMessage") ||
-              path?.pathname.includes("/messageTemplate") ||
-              path?.pathname.includes("/messageSend")
-            }
-            nested
-          >
-            <Toggler
-              defaultExpanded={
-                path?.pathname.includes("/autoMessage") ||
-                path?.pathname.includes("/messageTemplate") ||
-                path?.pathname.includes("/messageSend")
-              }
-              renderToggle={({ open, setOpen }) => (
-                <ListItemButton
-                  selected={
-                    path?.pathname.includes("/autoMessage") ||
-                    path?.pathname.includes("/messageTemplate") ||
-                    path?.pathname.includes("/messageSend")
-                      ? true
-                      : false
-                  }
-                  onClick={() => setOpen(!open)}
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M10 20C15.5228 20 20 15.5228 20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 11.5997 0.375616 13.1116 1.04346 14.4525C1.22094 14.8088 1.28001 15.2161 1.17712 15.6006L0.581511 17.8267C0.322954 18.793 1.20701 19.677 2.17335 19.4185L4.39939 18.8229C4.78393 18.72 5.19121 18.7791 5.54753 18.9565C6.88837 19.6244 8.40032 20 10 20ZM6 11.25C5.58579 11.25 5.25 11.5858 5.25 12C5.25 12.4142 5.58579 12.75 6 12.75H11.5C11.9142 12.75 12.25 12.4142 12.25 12C12.25 11.5858 11.9142 11.25 11.5 11.25H6ZM5.25 8.5C5.25 8.08579 5.58579 7.75 6 7.75H14C14.4142 7.75 14.75 8.08579 14.75 8.5C14.75 8.91421 14.4142 9.25 14 9.25H6C5.58579 9.25 5.25 8.91421 5.25 8.5Z"
-                      fill="#3B82F6"
-                    />
-                  </svg>
-                  <ListItemContent>
-                    <div className="text-[14px]  h-[38px] items-center flex font-[500] text-black">
-                      SMS Habarlar
-                    </div>
-                  </ListItemContent>
-                  <KeyboardArrowDownIcon
-                    sx={{ transform: open ? "rotate(180deg)" : "none" }}
-                  />
-                </ListItemButton>
-              )}
+          <ListItem className="h-[50px] hover:bg-[#3B82F6]">
+            <ListItemButton
+              onClick={() => history.push({ pathname: "/abouts" })}
+              selected={path?.pathname.includes("/abouts")}
             >
-              <List
-                className="border-l-[2px] !ml-3 !mt-1 border-[#E9EBF0]"
-                sx={{ gap: 0.5 }}
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <ListItem className="!pl-5" sx={{}}>
-                  <ListItemButton
-                    onClick={() => history.push({ pathname: "/autoMessage" })}
-                    className={`h-[40px] hover:text-blue ${
-                      path?.pathname.includes("/autoMessage")
-                        ? " !text-blue"
-                        : ""
-                    }`}
-                  >
-                    Atomat SMS
-                  </ListItemButton>
-                </ListItem>
-                <ListItem className="!pl-5">
-                  <ListItemButton
-                    onClick={() =>
-                      history.push({ pathname: "/messageTemplate" })
-                    }
-                    className={`h-[40px] hover:text-blue ${
-                      path?.pathname.includes("/messageTemplate")
-                        ? " !text-blue"
-                        : ""
-                    }`}
-                  >
-                    SMS nusgalar
-                  </ListItemButton>
-                </ListItem>
-                <ListItem className="!pl-5">
-                  <ListItemButton
-                    onClick={() => history.push({ pathname: "/messageSend" })}
-                    className={`h-[40px] hover:text-blue ${
-                      path?.pathname.includes("/messageSend")
-                        ? " !text-blue"
-                        : ""
-                    }`}
-                  >
-                    Ugradylan SMS
-                  </ListItemButton>
-                </ListItem>
-              </List>
-            </Toggler>
+                <circle cx="9.00098" cy="6" r="4" fill="#3B82F6" />
+                <ellipse
+                  cx="9.00098"
+                  cy="17.001"
+                  rx="7"
+                  ry="4"
+                  fill="#3B82F6"
+                />
+                <path
+                  d="M20.9996 17.0005C20.9996 18.6573 18.9641 20.0004 16.4788 20.0004C17.211 19.2001 17.7145 18.1955 17.7145 17.0018C17.7145 15.8068 17.2098 14.8013 16.4762 14.0005C18.9615 14.0005 20.9996 15.3436 20.9996 17.0005Z"
+                  fill="#3B82F6"
+                />
+                <path
+                  d="M17.9996 6.00073C17.9996 7.65759 16.6565 9.00073 14.9996 9.00073C14.6383 9.00073 14.292 8.93687 13.9712 8.81981C14.4443 7.98772 14.7145 7.02522 14.7145 5.99962C14.7145 4.97477 14.4447 4.01294 13.9722 3.18127C14.2927 3.06446 14.6387 3.00073 14.9996 3.00073C16.6565 3.00073 17.9996 4.34388 17.9996 6.00073Z"
+                  fill="#3B82F6"
+                />
+              </svg>
+
+              <ListItemContent>
+                <div className="text-[14px] font-[500] text-black">
+                  Biz barada
+                </div>
+              </ListItemContent>
+            </ListItemButton>
           </ListItem>
 
           <ListItem className="h-[50px] hover:bg-[#3B82F6]">

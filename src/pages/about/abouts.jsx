@@ -38,10 +38,10 @@ const AutoMessage = () => {
     return () => clearTimeout(time);
   }, [filter]);
 
-  if (isLoading) return <PageLoading />;
-  if (error) {
-    return <div>Ýalňyşlyk boldy</div>;
-  }
+  // if (isLoading) return <PageLoading />;
+  // if (error) {
+  //   return <div>Ýalňyşlyk boldy</div>;
+  // }
 
   console.log(data);
 
