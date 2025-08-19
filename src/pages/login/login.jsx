@@ -15,19 +15,20 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [login, { data, isLoading, error }] = useLoginMutation();
   const sign = async () => {
-    try {
-      const result = await login({ username: email, password }).unwrap();
-      console.log(result.data);
-      if (result.data?.token) {
-        localStorage.setItem("userData", JSON.stringify(result.data));
-        // history.push({ pathname: "/home" });
-        window.open("/home", "_self");
-      } else {
-        console.log(data.data);
-      }
-    } catch (err) {
-      console.error("Login failed:", err);
-    }
+    window.open("/home", "_self");
+    // try {
+    //   const result = await login({ username: email, password }).unwrap();
+    //   console.log(result.data);
+    //   if (result.data?.token) {
+    //     localStorage.setItem("userData", JSON.stringify(result.data));
+    //     // history.push({ pathname: "/home" });
+    //     window.open("/home", "_self");
+    //   } else {
+    //     console.log(data.data);
+    //   }
+    // } catch (err) {
+    //   console.error("Login failed:", err);
+    // }
   };
   return (
     <div className="max-h-[100vh] w-full flex justify-between">

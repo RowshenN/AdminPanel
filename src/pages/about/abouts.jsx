@@ -163,21 +163,6 @@ const AutoMessage = () => {
 
         {/* Table header */}
         <div className="w-full gap-[30px] flex items-center px-4 h-[40px] rounded-[6px] bg-[#F7F8FA]">
-          {/* {allSelected ? (
-            <div
-              onClick={() => {
-                setSelecteds([]);
-                setAllSelected(false);
-              }}
-            >
-              <CheckBox checked={true} />
-            </div>
-          ) : (
-            <div onClick={() => selectAll()}>
-              <CheckBox checked={false} />
-            </div>
-          )} */}
-
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[35%] uppercase">
             SMS habar
           </h1>
