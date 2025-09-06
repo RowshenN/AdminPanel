@@ -46,9 +46,9 @@ const Products = () => {
   }, [filter]);
 
   if (isLoading) return <PageLoading />;
-  if (error) {
-    return <div>Ýalňyşlyk boldy</div>;
-  }
+  // if (error) {
+  //   return <div>Ýalňyşlyk boldy</div>;
+  // }
   console.log("products", data);
 
   const selectItem = (id) => {
@@ -111,7 +111,7 @@ const Products = () => {
     <div className="w-full">
       {/* header section */}
       <div className="w-full pb-[30px] flex justify-between items-center">
-        <h1 className="text-[30px] font-[700]">Harytlar</h1>
+        <h1 className="text-[30px] font-[700]">Banner</h1>
         <div className="w-fit flex gap-5">
           <Select
             placeholder="Hemmesini görkez"
@@ -139,7 +139,7 @@ const Products = () => {
             <Option value="-price">-Bahasyna görä</Option>
           </Select>
           <Button
-            onClick={() => history.push({ pathname: "/products/create" })}
+            onClick={() => history.push({ pathname: "/banner/create" })}
             className="  !h-[40px] !bg-blue !rounded-[8px] !px-[17px] !w-fit   !text-[14px] !text-white  "
             startDecorator={<Add />}
           >
@@ -221,7 +221,7 @@ const Products = () => {
           </h1> */}
 
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%]   whitespace-nowrap uppercase">
-            KAtegoriýa
+            Text
           </h1>
 
           <h1 className="text-[14px] font-[500] whitespace-nowrap text-[#98A2B2] w-[15%] text-center uppercase">

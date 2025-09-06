@@ -8,10 +8,35 @@ import WarningIcon from "@mui/icons-material/Warning";
 import { axiosInstance } from "../../utils/axiosIntance";
 import { useHistory } from "react-router-dom";
 import PageLoading from "../../components/PageLoading";
-import { useCreateAutoReplyMutation } from "../../services/messageAutoReplay";
+import { useCreateCategoryMutation } from "../../services/category";
+import { message } from "antd";
 
-const AutoMessageCreate = () => {
+const NewsCreate = () => {
   const history = useHistory();
+  const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState({
+    title: "",
+  });
+  const [file, setFile] = useState(null);
+  const fileRef = useRef(null);
+  const [warning, setWarning] = useState(false);
+
+  const [createCategory] = useCreateCategoryMutation();
+
+  const createcategory = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("title", category.title);
+      console.log(file);
+      file != null && formData.append("image", file);
+      await createCategory(formData).unwrap();
+      history.goBack();
+    } catch (err) {
+      console.error("Pozmakda säwlik:", err);
+      message.warning("Başartmady!");
+    }
+  };
+
   const [about, setAbout] = useState({
     name_tm: "",
     name_ru: "",
@@ -21,35 +46,40 @@ const AutoMessageCreate = () => {
     text_ru: "",
   });
 
-  const [createAutoReply] = useCreateAutoReplyMutation();
+  const fileHandler = (f) => {
+    console.log(f);
 
-  const createcategory = async () => {
-    try {
-      await createAutoReply(about).unwrap();
-      history.goBack();
-    } catch (err) {
-      console.error("Pozmakda säwlik:", err);
+    let type = f?.type?.split("/")[1];
+    console.log(type);
+    if (
+      (type == "png" || type == "jpg" || type == "jpeg") &&
+      f.size <= 100 * 1024
+    ) {
+      setFile(f);
+    } else {
+      alert("Olceg we type uns berin!");
     }
   };
-
-  return (
+  return loading ? (
+    <PageLoading />
+  ) : (
     <div className="w-full">
       {/* header section */}
       <div className="w-full pb-[30px] flex justify-between items-center">
-        <h1 className="text-[30px] font-[700]">Biz barada</h1>
+        <h1 className="text-[30px] font-[700]">News</h1>
       </div>
 
       <div className="w-full min-h-[60vh] p-5 bg-white rounded-[8px]">
         <div className=" flex items-center gap-4 pb-5 border-b-[1px] border-b-[#E9EBF0]">
           <div className="border-l-[3px] border-blue h-[20px]"></div>
-          <h1 className="text-[20px] font-[500]">Biz barada goş</h1>
+          <h1 className="text-[20px] font-[500]">News goş</h1>
         </div>
 
         <div className="flex items-center border-t-[1px] justify-between py-[30px]">
           <div className="w-[380px]">
-            <h1 className="text-[18px] font-[500]">Header_tm</h1>
+            <h1 className="text-[18px] font-[500]">Name_tm</h1>
             <p className="text-[14px] mt-2 font-[500] text-[#98A2B2]">
-              Header_tm
+              Name_tm
             </p>
           </div>
           <div className="flex justify-start w-[550px]">
@@ -67,9 +97,9 @@ const AutoMessageCreate = () => {
 
         <div className="flex items-center border-t-[1px] justify-between py-[30px]">
           <div className="w-[380px]">
-            <h1 className="text-[18px] font-[500]">Header_ru</h1>
+            <h1 className="text-[18px] font-[500]">Name_ru</h1>
             <p className="text-[14px] mt-2 font-[500] text-[#98A2B2]">
-              Header_ru
+              Name_ru
             </p>
           </div>
           <div className="flex justify-start w-[550px]">
@@ -87,9 +117,9 @@ const AutoMessageCreate = () => {
 
         <div className="flex items-center border-t-[1px] justify-between py-[30px]">
           <div className="w-[380px]">
-            <h1 className="text-[18px] font-[500]">Header_en</h1>
+            <h1 className="text-[18px] font-[500]">Name_en</h1>
             <p className="text-[14px] mt-2 font-[500] text-[#98A2B2]">
-              Header_en
+              Name_en
             </p>
           </div>
           <div className="flex justify-start w-[550px]">
@@ -185,4 +215,4 @@ const AutoMessageCreate = () => {
   );
 };
 
-export default React.memo(AutoMessageCreate);
+export default React.memo(NewsCreate);

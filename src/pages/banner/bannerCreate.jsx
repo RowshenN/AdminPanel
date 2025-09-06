@@ -103,18 +103,18 @@ const ProductsCreate = () => {
       )}
       {/* header section */}
       <div className="w-full pb-[30px] flex justify-between items-center">
-        <h1 className="text-[30px] font-[700]">Harytlar</h1>
+        <h1 className="text-[30px] font-[700]">Banner</h1>
       </div>
 
       <div className="w-full min-h-[60vh] p-5 bg-white rounded-[8px]">
         <div className=" flex items-center gap-4 pb-5 border-b-[1px] border-b-[#E9EBF0]">
           <div className="border-l-[3px] border-blue h-[20px]"></div>
-          <h1 className="text-[20px] font-[500]">Harytlar maglumaty</h1>
+          <h1 className="text-[20px] font-[500]">Banner maglumaty</h1>
         </div>
 
         <div className="flex items-center object-contain justify-between py-[30px]">
           <div className="w-[49%]">
-            <h1 className="text-[16px] font-[500]">Harydyň suratlary</h1>
+            <h1 className="text-[16px] font-[500]">Banner suratlary</h1>
             <div className="flex gap-5 mt-5 justify-start  ">
               <input
                 onChange={(e) => setFile(e.target.files[0])}
@@ -177,22 +177,51 @@ const ProductsCreate = () => {
           </div>
         </div>
 
-        <div className="flex items-center  justify-between py-[15px]">
-          <div className="w-[49%]">
-            <h1 className="text-[16px] font-[500]">Harydyň ady</h1>
-            <input
-              value={product?.title}
-              onChange={(e) => {
-                setProduct({ ...product, title: e.target.value });
-              }}
-              className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
-              placeholder="Girizilmedik"
-              type="text"
-            />
+        <div className="flex items-start  justify-between py-[15px]">
+          <div className="w-[49%] flex flex-col items-start justify-start gap-4 ">
+            <div className="w-full">
+              <h1 className="text-[16px] font-[500]">Banner_tm ady</h1>
+              <input
+                value={product?.title}
+                onChange={(e) => {
+                  setProduct({ ...product, title: e.target.value });
+                }}
+                className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
+                placeholder="Girizilmedik"
+                type="text"
+              />
+            </div>
+
+            <div className="w-full">
+              <h1 className="text-[16px] font-[500]">Banner_en ady</h1>
+              <input
+                value={product?.title}
+                onChange={(e) => {
+                  setProduct({ ...product, title: e.target.value });
+                }}
+                className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
+                placeholder="Girizilmedik"
+                type="text"
+              />
+            </div>
+
+            <div className="w-full">
+              <h1 className="text-[16px] font-[500]">Banner_ru ady</h1>
+              <input
+                value={product?.title}
+                onChange={(e) => {
+                  setProduct({ ...product, title: e.target.value });
+                }}
+                className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
+                placeholder="Girizilmedik"
+                type="text"
+              />
+            </div>
           </div>
-          <div className="w-[49%]">
-            <h1 className="text-[16px] font-[500]">Kategoriýa</h1>
-            <Select
+          <div className="w-[49%] flex flex-col items-baseline justify-start gap-4">
+            <div className="w-full  ">
+              <h1 className="text-[16px] font-[500]">Text_tm</h1>
+              {/* <Select
               value={product?.categoryId}
               onChange={(e, newValue) => {
                 setProduct({
@@ -219,7 +248,28 @@ const ProductsCreate = () => {
                   </Option>
                 );
               })}
-            </Select>
+            </Select> */}
+              <textarea
+                className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
+                placeholder="Text_tm"
+              ></textarea>
+            </div>
+
+            <div className="w-full  ">
+              <h1 className="text-[16px] font-[500]">Text_en</h1>
+              <textarea
+                className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
+                placeholder="Text_en"
+              ></textarea>
+            </div>
+
+            <div className="w-full  ">
+              <h1 className="text-[16px] font-[500]">Text_ru</h1>
+              <textarea
+                className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
+                placeholder="Text_ru"
+              ></textarea>
+            </div>
           </div>
         </div>
       </div>

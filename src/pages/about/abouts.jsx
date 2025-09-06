@@ -105,10 +105,10 @@ const AutoMessage = () => {
     <div className="w-full">
       {/* header section */}
       <div className="w-full pb-[30px] flex justify-between items-center">
-        <h1 className="text-[30px] font-[700]">Auto SMS habarlar</h1>
+        <h1 className="text-[30px] font-[700]">Biz barada</h1>
         <div className="w-fit flex gap-5">
           <Button
-            onClick={() => history.push({ pathname: "/autoMessage/create" })}
+            onClick={() => history.push({ pathname: "/about/create" })}
             className="  !h-[40px] !bg-blue !rounded-[8px] !px-[17px] !w-fit   !text-[14px] !text-white  "
             startDecorator={<Add />}
           >
@@ -164,16 +164,16 @@ const AutoMessage = () => {
         {/* Table header */}
         <div className="w-full gap-[30px] flex items-center px-4 h-[40px] rounded-[6px] bg-[#F7F8FA]">
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[35%] uppercase">
-            SMS habar
+            Header
           </h1>
 
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[35%] min-w-[120px] whitespace-nowrap uppercase">
-            Jogap
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[55%] min-w-[120px] whitespace-nowrap uppercase">
+            Text
           </h1>
 
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[15%] uppercase">
+          {/* <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[15%] uppercase">
             Status
-          </h1>
+          </h1> */}
         </div>
 
         {/* Table body */}
@@ -204,7 +204,7 @@ const AutoMessage = () => {
               <h1 className="text-[14px] flex items-center justify-between gap-4 font-[500] text-[#98A2B2] w-[15%] uppercase">
                 <div
                   onClick={() =>
-                    history.push({ pathname: "/autoMessage/" + item?.id })
+                    history.push({ pathname: "/about/" + item?.id })
                   }
                   className="cursor-pointer p-2"
                 >
@@ -229,7 +229,7 @@ const AutoMessage = () => {
         {selecteds?.length == 0 ? (
           <div className="w-full flex mt-5 justify-between items-center">
             <h1 className="text-[14px] font-[400]">
-              {data?.data?.length} Auto habarlar
+              {data?.data?.length} Biz barada
             </h1>
             <Pagination
               meta={categories?.meta}

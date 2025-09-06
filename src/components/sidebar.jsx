@@ -80,7 +80,7 @@ export default function Sidebar() {
         onClick={() => closeSidebar()}
         className="h-[100px] font-[600] text-[22px] border-b-[1px] border-[#E9EBF0] flex items-center justify-start pl-7"
       >
-        Altyn Açar Admin
+        Açyk Asman Ýyldyzy Admin
       </div>
 
       <div className="min-h-[100px]  h-[100px] w-[80%] mx-auto border-b-[1px] border-[#E9EBF0] gap-4 font-[600] text-[22px]   flex items-center justify-center">
@@ -156,8 +156,38 @@ export default function Sidebar() {
           </ListItem>
           <ListItem className="h-[50px] hover:bg-[#3B82F6]">
             <ListItemButton
-              onClick={() => history.push({ pathname: "/transactions" })}
-              selected={path.pathname.includes("/transactions")}
+              onClick={() => history.push({ pathname: "/contact" })}
+              selected={path.pathname.includes("/contact")}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.84615 8C5.84615 5.17157 5.84615 3.75736 6.74736 2.87868C7.64857 2 9.09905 2 12 2C14.901 2 16.3514 2 17.2526 2.87868C18.1538 3.75736 18.1538 5.17157 18.1538 8V16C18.1538 18.8284 18.1538 20.2426 17.2526 21.1213C16.3514 22 14.901 22 12 22C9.09905 22 7.64857 22 6.74736 21.1213C5.84615 20.2426 5.84615 18.8284 5.84615 16V8Z"
+                  fill="#3B82F6"
+                />
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M2.76923 3.75C3.19407 3.75 3.53846 4.08579 3.53846 4.5V19.5C3.53846 19.9142 3.19407 20.25 2.76923 20.25C2.3444 20.25 2 19.9142 2 19.5V4.5C2 4.08579 2.3444 3.75 2.76923 3.75ZM21.2308 3.75C21.6556 3.75 22 4.08579 22 4.5V19.5C22 19.9142 21.6556 20.25 21.2308 20.25C20.8059 20.25 20.4615 19.9142 20.4615 19.5V4.5C20.4615 4.08579 20.8059 3.75 21.2308 3.75Z"
+                  fill="#3B82F6"
+                />
+              </svg>
+
+              <ListItemContent>
+                <div className="text-[14px] font-[500] text-black">Contact</div>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem className="h-[50px] hover:bg-[#3B82F6]">
+            <ListItemButton
+              onClick={() => history.push({ pathname: "/subscribes" })}
+              selected={path.pathname.includes("/subscribes")}
             >
               <svg
                 width="24"
@@ -180,7 +210,7 @@ export default function Sidebar() {
 
               <ListItemContent>
                 <div className="text-[14px] font-[500] text-black">
-                  Sargytlar
+                  Subscribe
                 </div>
               </ListItemContent>
             </ListItemButton>
@@ -188,8 +218,8 @@ export default function Sidebar() {
 
           <ListItem className="h-[50px] hover:bg-[#3B82F6]">
             <ListItemButton
-              selected={path.pathname.includes("/category")}
-              onClick={() => history.push({ pathname: "/category" })}
+              selected={path.pathname.includes("/news")}
+              onClick={() => history.push({ pathname: "/news" })}
             >
               <svg
                 width="24"
@@ -217,16 +247,84 @@ export default function Sidebar() {
               </svg>
 
               <ListItemContent>
-                <div className="text-[14px] font-[500] text-black">
-                  Kategoriýa
-                </div>
+                <div className="text-[14px] font-[500] text-black">News</div>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
           <ListItem className="h-[50px] hover:bg-[#3B82F6]">
             <ListItemButton
-              onClick={() => history.push({ pathname: "/products" })}
-              selected={path.pathname.includes("/products")}
+              selected={path.pathname.includes("/service")}
+              onClick={() => history.push({ pathname: "/service" })}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 6.5C2 4.37868 2 3.31802 2.65901 2.65901C3.31802 2 4.37868 2 6.5 2C8.62132 2 9.68198 2 10.341 2.65901C11 3.31802 11 4.37868 11 6.5C11 8.62132 11 9.68198 10.341 10.341C9.68198 11 8.62132 11 6.5 11C4.37868 11 3.31802 11 2.65901 10.341C2 9.68198 2 8.62132 2 6.5Z"
+                  fill="#3B82F6"
+                />
+                <path
+                  d="M13 17.5C13 15.3787 13 14.318 13.659 13.659C14.318 13 15.3787 13 17.5 13C19.6213 13 20.682 13 21.341 13.659C22 14.318 22 15.3787 22 17.5C22 19.6213 22 20.682 21.341 21.341C20.682 22 19.6213 22 17.5 22C15.3787 22 14.318 22 13.659 21.341C13 20.682 13 19.6213 13 17.5Z"
+                  fill="#3B82F6"
+                />
+                <path
+                  d="M2 17.5C2 15.3787 2 14.318 2.65901 13.659C3.31802 13 4.37868 13 6.5 13C8.62132 13 9.68198 13 10.341 13.659C11 14.318 11 15.3787 11 17.5C11 19.6213 11 20.682 10.341 21.341C9.68198 22 8.62132 22 6.5 22C4.37868 22 3.31802 22 2.65901 21.341C2 20.682 2 19.6213 2 17.5Z"
+                  fill="#3B82F6"
+                />
+                <path
+                  d="M13 6.5C13 4.37868 13 3.31802 13.659 2.65901C14.318 2 15.3787 2 17.5 2C19.6213 2 20.682 2 21.341 2.65901C22 3.31802 22 4.37868 22 6.5C22 8.62132 22 9.68198 21.341 10.341C20.682 11 19.6213 11 17.5 11C15.3787 11 14.318 11 13.659 10.341C13 9.68198 13 8.62132 13 6.5Z"
+                  fill="#3B82F6"
+                />
+              </svg>
+
+              <ListItemContent>
+                <div className="text-[14px] font-[500] text-black">Service</div>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+          <ListItem className="h-[50px] hover:bg-[#3B82F6]">
+            <ListItemButton
+              selected={path.pathname.includes("/works")}
+              onClick={() => history.push({ pathname: "/works" })}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 6.5C2 4.37868 2 3.31802 2.65901 2.65901C3.31802 2 4.37868 2 6.5 2C8.62132 2 9.68198 2 10.341 2.65901C11 3.31802 11 4.37868 11 6.5C11 8.62132 11 9.68198 10.341 10.341C9.68198 11 8.62132 11 6.5 11C4.37868 11 3.31802 11 2.65901 10.341C2 9.68198 2 8.62132 2 6.5Z"
+                  fill="#3B82F6"
+                />
+                <path
+                  d="M13 17.5C13 15.3787 13 14.318 13.659 13.659C14.318 13 15.3787 13 17.5 13C19.6213 13 20.682 13 21.341 13.659C22 14.318 22 15.3787 22 17.5C22 19.6213 22 20.682 21.341 21.341C20.682 22 19.6213 22 17.5 22C15.3787 22 14.318 22 13.659 21.341C13 20.682 13 19.6213 13 17.5Z"
+                  fill="#3B82F6"
+                />
+                <path
+                  d="M2 17.5C2 15.3787 2 14.318 2.65901 13.659C3.31802 13 4.37868 13 6.5 13C8.62132 13 9.68198 13 10.341 13.659C11 14.318 11 15.3787 11 17.5C11 19.6213 11 20.682 10.341 21.341C9.68198 22 8.62132 22 6.5 22C4.37868 22 3.31802 22 2.65901 21.341C2 20.682 2 19.6213 2 17.5Z"
+                  fill="#3B82F6"
+                />
+                <path
+                  d="M13 6.5C13 4.37868 13 3.31802 13.659 2.65901C14.318 2 15.3787 2 17.5 2C19.6213 2 20.682 2 21.341 2.65901C22 3.31802 22 4.37868 22 6.5C22 8.62132 22 9.68198 21.341 10.341C20.682 11 19.6213 11 17.5 11C15.3787 11 14.318 11 13.659 10.341C13 9.68198 13 8.62132 13 6.5Z"
+                  fill="#3B82F6"
+                />
+              </svg>
+
+              <ListItemContent>
+                <div className="text-[14px] font-[500] text-black">Works</div>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+          <ListItem className="h-[50px] hover:bg-[#3B82F6]">
+            <ListItemButton
+              onClick={() => history.push({ pathname: "/banner" })}
+              selected={path.pathname.includes("/banner")}
             >
               <svg
                 width="24"
@@ -254,14 +352,12 @@ export default function Sidebar() {
               </svg>
 
               <ListItemContent>
-                <div className="text-[14px] font-[500] text-black">
-                  Harytlar
-                </div>
+                <div className="text-[14px] font-[500] text-black">Banner</div>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
 
-          <ListItem className="h-[50px] hover:bg-[#3B82F6]">
+          {/* <ListItem className="h-[50px] hover:bg-[#3B82F6]">
             <ListItemButton
               selected={path.pathname.includes("/groups")}
               onClick={() => history.push({ pathname: "/groups" })}
@@ -321,12 +417,12 @@ export default function Sidebar() {
                 <div className="text-[14px] font-[500] text-black">Köçeler</div>
               </ListItemContent>
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
 
           <ListItem className="h-[50px] hover:bg-[#3B82F6]">
             <ListItemButton
-              onClick={() => history.push({ pathname: "/abouts" })}
-              selected={path?.pathname.includes("/abouts")}
+              onClick={() => history.push({ pathname: "/about" })}
+              selected={path?.pathname.includes("/about")}
             >
               <svg
                 width="24"
@@ -363,6 +459,42 @@ export default function Sidebar() {
 
           <ListItem className="h-[50px] hover:bg-[#3B82F6]">
             <ListItemButton
+              onClick={() => history.push({ pathname: "/admins" })}
+              selected={path?.pathname.includes("/admins")}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="9.00098" cy="6" r="4" fill="#3B82F6" />
+                <ellipse
+                  cx="9.00098"
+                  cy="17.001"
+                  rx="7"
+                  ry="4"
+                  fill="#3B82F6"
+                />
+                <path
+                  d="M20.9996 17.0005C20.9996 18.6573 18.9641 20.0004 16.4788 20.0004C17.211 19.2001 17.7145 18.1955 17.7145 17.0018C17.7145 15.8068 17.2098 14.8013 16.4762 14.0005C18.9615 14.0005 20.9996 15.3436 20.9996 17.0005Z"
+                  fill="#3B82F6"
+                />
+                <path
+                  d="M17.9996 6.00073C17.9996 7.65759 16.6565 9.00073 14.9996 9.00073C14.6383 9.00073 14.292 8.93687 13.9712 8.81981C14.4443 7.98772 14.7145 7.02522 14.7145 5.99962C14.7145 4.97477 14.4447 4.01294 13.9722 3.18127C14.2927 3.06446 14.6387 3.00073 14.9996 3.00073C16.6565 3.00073 17.9996 4.34388 17.9996 6.00073Z"
+                  fill="#3B82F6"
+                />
+              </svg>
+
+              <ListItemContent>
+                <div className="text-[14px] font-[500] text-black">Admins</div>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+
+          {/* <ListItem className="h-[50px] hover:bg-[#3B82F6]">
+            <ListItemButton
               onClick={() => history.push({ pathname: "/users" })}
               selected={path?.pathname.includes("/users")}
             >
@@ -397,9 +529,9 @@ export default function Sidebar() {
                 </div>
               </ListItemContent>
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
 
-          <ListItem className="h-[50px] hover:bg-[#3B82F6]">
+          {/* <ListItem className="h-[50px] hover:bg-[#3B82F6]">
             <ListItemButton
               onClick={() => history.push({ pathname: "/admins" })}
               selected={path?.pathname.includes("/admins")}
@@ -425,7 +557,7 @@ export default function Sidebar() {
                 </div>
               </ListItemContent>
             </ListItemButton>
-          </ListItem>
+          </ListItem>  */}
         </List>
 
         <div className="border-t-[1px] border-[#E9EBF0] my-2"></div>

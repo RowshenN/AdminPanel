@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Select, { selectClasses } from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import Button from "@mui/joy/Button";
@@ -10,55 +10,43 @@ import { axiosInstance } from "../../utils/axiosIntance";
 import { useHistory } from "react-router-dom";
 import Pagination from "../../components/pagination";
 import PageLoading from "../../components/PageLoading";
-import userDefault from "../../images/user.png";
+import { useGetAllCategoriesQuery } from "../../services/category";
 
-import { useGetAllCustomersQuery } from "../../services/custumers";
-const StandartUsers = () => {
+const Service = () => {
   const history = useHistory();
   const [pages, setPages] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [selecteds, setSelecteds] = useState([]);
   const [allSelected, setAllSelected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isDelete, setISDelete] = useState(false);
+  const [search, setSearch] = useState("");
   const [filter, setFilter] = useState({
     limit: 10,
     page: 1,
-    type: "user",
-    search_query: "",
+    search: "",
     sort: "default",
   });
 
-  const [search, setSearch] = useState("");
-  const {
-    data: custumers,
-    error,
-    isLoading,
-  } = useGetAllCustomersQuery({
-    limit: filter?.limit,
-    page: filter?.page,
-    search: filter.search_query,
-  });
-
-  useEffect(() => {
-    if (custumers) {
-      setUsers(custumers?.data);
-    }
-  }, [custumers]);
-
+  const { data, error, isLoading } = useGetAllCategoriesQuery(
+    search
+    //    {
+    //   skip: true, // Don't auto-fetch on mount
+    // }
+  );
   useEffect(() => {
     const time = setTimeout(() => {
-      setFilter({ ...filter, page: 1, search_query: search });
+      setSearch(filter.search);
     }, 500);
     return () => clearTimeout(time);
-  }, [search]);
+  }, [filter]);
 
   if (isLoading) return <PageLoading />;
   // if (error) {
-  //   console.log(error);
   //   return <div>Ýalňyşlyk boldy</div>;
   // }
-  console.log("products", custumers);
+
+  console.log(data);
 
   const selectItem = (id) => {
     let array = selecteds;
@@ -83,7 +71,7 @@ const StandartUsers = () => {
   const selectAll = () => {
     setAllSelected(true);
     let array = [];
-    users?.data?.map((item) => {
+    categories?.data?.map((item) => {
       array.push(item?.id);
     });
     setSelecteds([...array]);
@@ -100,20 +88,52 @@ const StandartUsers = () => {
     return bar;
   };
 
-  const deletCategories = () => {};
+  const deletCategories = () => {
+    // setISDelete(false);
+    // axiosInstance
+    //   .post("/categories/delete", {
+    //     categories: selecteds,
+    //   })
+    //   .then((data) => {
+    //     console.log(data.data);
+    //     getCategories();
+    //     setSelecteds([]);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+  };
 
   return (
     <div className="w-full">
       {/* header section */}
       <div className="w-full pb-[30px] flex justify-between items-center">
-        <h1 className="text-[30px] font-[700]">Standard hasaplar</h1>
+        <h1 className="text-[30px] font-[700]">Service</h1>
         <div className="w-fit flex gap-5">
+          <Select
+            placeholder="Hemmesini görkez"
+            className="!border-[#E9EBF0] !border-[1px] !h-[40px] !bg-white !rounded-[8px] !px-[17px] !w-fit !min-w-[200px] !text-[14px] !text-black  "
+            indicator={<KeyboardArrowDown className="!text-[16px]" />}
+            sx={{
+              [`& .${selectClasses.indicator}`]: {
+                transition: "0.2s",
+                [`&.${selectClasses.expanded}`]: {
+                  transform: "rotate(-180deg)",
+                },
+              },
+            }}
+          >
+            <Option value="Ahlisi">Hemmesini görkez</Option>
+            <Option value="Active">Adyna görä</Option>
+            <Option value="Disactive">Haryt sanyna göra</Option>
+            <Option value="Statusyna">Statusyna görä</Option>
+          </Select>
           <Button
-            onClick={() => history.push({ pathname: "/users/create" })}
+            onClick={() => history.push({ pathname: "/service/create" })}
             className="  !h-[40px] !bg-blue !rounded-[8px] !px-[17px] !w-fit   !text-[14px] !text-white  "
             startDecorator={<Add />}
           >
-            Goş
+            Service goş
           </Button>
           {/* <button className="h-[40px] border-[#E9EBF0] border-[1px] rounded-[8px]"></button> */}
         </div>
@@ -152,8 +172,8 @@ const StandartUsers = () => {
             </defs>
           </svg>
           <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={filter.search}
+            onChange={(e) => setFilter({ ...filter, search: e.target.value })}
             type="text"
             className="w-full border-none outline-none h-[38px] pl-4 text-[14px] font-[600] text-black "
             placeholder="Gözleg"
@@ -161,7 +181,7 @@ const StandartUsers = () => {
         </div>
 
         {/* Table header */}
-        <div className="w-full gap-[20px] flex items-center px-4 h-[40px] rounded-[6px] bg-[#F7F8FA]">
+        <div className="w-full gap-[30px] flex items-center px-4 h-[40px] rounded-[6px] bg-[#F7F8FA]">
           {/* {allSelected ? (
             <div
               onClick={() => {
@@ -176,32 +196,31 @@ const StandartUsers = () => {
               <CheckBox checked={false} />
             </div>
           )} */}
+          {/* <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[10%] min-w-[45px] uppercase">
+            Surat
+          </h1> */}
 
-          <h1 className="text-[14px] whitespace-nowrap font-[500] text-[#98A2B2] w-[25%] uppercase">
-            Ulanyjy ady
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%] uppercase">
+            Name
           </h1>
 
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[35%] uppercase">
-            Salgysy we Köçesi
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[40%] min-w-[120px] whitespace-nowrap uppercase">
+            Text
           </h1>
 
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[15%]   whitespace-nowrap uppercase">
-            Telefon
-          </h1>
-
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[25%]   whitespace-nowrap uppercase">
-            Hasaby we cashback
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[15%] uppercase">
+            Status
           </h1>
         </div>
 
         {/* Table body */}
-        {users?.map((item, i) => {
+        {data?.data?.map((item, i) => {
           return loading ? (
             <PageLoading />
           ) : (
             <div
               key={"categoryItem" + i}
-              className="w-full gap-[20px] flex items-center px-4 h-[70px] rounded-[6px] bg-white border-b-[1px] border-[#E9EBF0]"
+              className="w-full gap-[30px] flex items-center px-4 h-[70px] rounded-[6px] bg-white border-b-[1px] border-[#E9EBF0]"
             >
               {/* <div onClick={() => selectItem(item?.id)}>
                 {isSelected(item?.id) ? (
@@ -210,31 +229,37 @@ const StandartUsers = () => {
                   <CheckBox checked={false} />
                 )}
               </div> */}
+              <div className="  w-[10%] min-w-[45px]">
+                <h1 className="rounded-[4px] flex items-center justify-center w-[40px] h-[40px] bg-[#F7F8FA]">
+                  <img
+                    src={process.env.REACT_APP_BASE_URL + item?.image}
+                    alt=""
+                  />
+                </h1>
+              </div>
 
-              <h1 className="text-[14px] font-[500] text-black w-[25%] uppercase">
-                {item?.first_name + " " + item?.last_name}
+              <h1 className="text-[14px] font-[500] text-black w-[40%] uppercase">
+                {item?.title}
               </h1>
 
-              <h1 className="text-[14px] font-[500] text-black w-[35%] uppercase">
-                <span className="!font-[700] text-black">salgysy: </span>
-                {item?.address} <br />
-                <span className="!font-[700] text-black">köçesi: </span>
-                {item?.street?.title}
+              <h1 className="text-[14px] font-[500] text-black w-[20%] min-w-[120px] whitespace-nowrap uppercase">
+                {item?.products ? item?.products?.length : 0 + "  "} haryt
               </h1>
 
-              <h1 className="text-[14px] font-[500] text-black w-[15%]   whitespace-nowrap uppercase">
-                {item?.phone_number}
-              </h1>
-              <h1 className="text-[14px] font-[500] text-black w-[25%] flex gap-2 justify-between  whitespace-nowrap uppercase">
-                <div>
-                  <span className="!font-[700] text-black">Hasaby: </span>
-                  {item?.balance} TMT <br />
-                  <span className="!font-[700] text-black">cashback: </span>
-                  {item?.cashback} TMT
+              <h1 className="text-[14px] flex items-center justify-between gap-4 font-[500] text-[#98A2B2] w-[15%] uppercase">
+                <div
+                  className={`bg-opacity-15 px-4 py-2 w-fit rounded-[12px] ${
+                    item?.is_active
+                      ? "text-[#44CE62] px-[26px] bg-[#44CE62]"
+                      : "text-red bg-red"
+                  }  `}
+                >
+                  {item?.is_active ? "Active" : "Disactive"}
                 </div>
+
                 <div
                   onClick={() =>
-                    history.push({ pathname: "/users/" + item?.id })
+                    history.push({ pathname: "/category/" + item?.id })
                   }
                   className="cursor-pointer p-2"
                 >
@@ -251,10 +276,6 @@ const StandartUsers = () => {
                   </svg>
                 </div>
               </h1>
-
-              {/* <h1 className="text-[14px] flex items-center justify-between gap-4 font-[500] text-[#98A2B2] w-[25%] min-w-[120px] uppercase">
-               
-              </h1> */}
             </div>
           );
         })}
@@ -263,24 +284,20 @@ const StandartUsers = () => {
         {selecteds?.length == 0 ? (
           <div className="w-full flex mt-5 justify-between items-center">
             <h1 className="text-[14px] font-[400]">
-              {users?.length} Standard hasap
+              {data?.data?.length} News
             </h1>
-            {users && (
-              <Pagination
-                // meta={users}
-                pageNo={filter?.page}
-                length={users?.length}
-                next={() =>
-                  users?.length > 0 &&
-                  setFilter({ ...filter, page: filter.page + 1 })
-                }
-                prev={() => setFilter({ ...filter, page: filter.page - 1 })}
-                goTo={(item) => setFilter({ ...filter, page: item })}
-              />
-            )}
+            <Pagination
+              meta={categories?.meta}
+              pages={pages}
+              pageNo={filter?.page}
+              length={data?.data?.length}
+              next={() => setFilter({ ...filter, page: filter.page + 1 })}
+              prev={() => setFilter({ ...filter, page: filter.page - 1 })}
+              goTo={(item) => setFilter({ ...filter, page: item })}
+            />
           </div>
         ) : (
-          <div className="sticky bottom-0 w-full mt-2 flex justify-between items-center bg-white py-4 px-5 border-[1px] border-[#E9EBF0] rounded-[8px]">
+          <div className="w-full mt-2 flex justify-between items-center bg-white py-4 px-5 border-[1px] border-[#E9EBF0] rounded-[8px]">
             <h1 className="text-[14px] font-[400]">
               {selecteds?.length + " "} sany saýlandy
             </h1>
@@ -325,9 +342,7 @@ const StandartUsers = () => {
             }}
           >
             <div className="flex w-[350px] border-b-[1px] border-[#E9EBF0] pb-5 justify-between items-center">
-              <h1 className="text-[20px] font-[500]">
-                Standard hasaby aýyrmak
-              </h1>
+              <h1 className="text-[20px] font-[500]">Kategoriýa aýyrmak</h1>
               <button onClick={() => setISDelete(false)}>
                 <svg
                   width="16"
@@ -348,7 +363,7 @@ const StandartUsers = () => {
 
             <div>
               <h1 className="text-[16px] text-center my-10 font-[400]">
-                Standard hasaby aýyrmak isleýärsiňizmi?
+                Kategoriýany aýyrmak isleýärsiňizmi?
               </h1>
 
               <div className="flex gap-[29px] justify-center">
@@ -373,4 +388,4 @@ const StandartUsers = () => {
   );
 };
 
-export default React.memo(StandartUsers);
+export default React.memo(Service);

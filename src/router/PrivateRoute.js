@@ -32,9 +32,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
                 }}
               >
                 <Component {...props} />
-                <div className="text-gray-400 w-full text-center fixed bottom-5 right-0.5">
+                {/* <div className="text-gray-400 w-full text-center fixed bottom-5 right-0.5">
                   © 2025 Povered by "Ýyldyrym bady"
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

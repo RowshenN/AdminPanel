@@ -102,7 +102,7 @@ const Admins = () => {
     <div className="w-full">
       {/* header section */}
       <div className="w-full pb-[30px] flex justify-between items-center">
-        <h1 className="text-[30px] font-[700]">Admin (Ulanyjy) hasaplar</h1>
+        <h1 className="text-[30px] font-[700]">Admins</h1>
         <div className="w-fit flex gap-5">
           <Button
             onClick={() => history.push({ pathname: "/admins/create" })}
@@ -174,11 +174,11 @@ const Admins = () => {
           )} */}
 
           <h1 className="text-[14px] whitespace-nowrap font-[500] text-[#98A2B2] w-[25%] uppercase">
-            Ulanyjy ady
+            Admin ady
           </h1>
 
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[35%] uppercase">
-            Ulanyjy Familiýa
+            Admin Familiýa
           </h1>
 
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[15%]   whitespace-nowrap uppercase">

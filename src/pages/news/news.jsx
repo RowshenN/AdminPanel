@@ -12,7 +12,7 @@ import Pagination from "../../components/pagination";
 import PageLoading from "../../components/PageLoading";
 import { useGetAllCategoriesQuery } from "../../services/category";
 
-const Categories = () => {
+const News = () => {
   const history = useHistory();
   const [pages, setPages] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -42,9 +42,9 @@ const Categories = () => {
   }, [filter]);
 
   if (isLoading) return <PageLoading />;
-  if (error) {
-    return <div>Ýalňyşlyk boldy</div>;
-  }
+  // if (error) {
+  //   return <div>Ýalňyşlyk boldy</div>;
+  // }
 
   console.log(data);
 
@@ -108,7 +108,7 @@ const Categories = () => {
     <div className="w-full">
       {/* header section */}
       <div className="w-full pb-[30px] flex justify-between items-center">
-        <h1 className="text-[30px] font-[700]">Kategoriýa</h1>
+        <h1 className="text-[30px] font-[700]">News</h1>
         <div className="w-fit flex gap-5">
           <Select
             placeholder="Hemmesini görkez"
@@ -129,11 +129,11 @@ const Categories = () => {
             <Option value="Statusyna">Statusyna görä</Option>
           </Select>
           <Button
-            onClick={() => history.push({ pathname: "/category/create" })}
+            onClick={() => history.push({ pathname: "/news/create" })}
             className="  !h-[40px] !bg-blue !rounded-[8px] !px-[17px] !w-fit   !text-[14px] !text-white  "
             startDecorator={<Add />}
           >
-            Kategoriýa goş
+            New goş
           </Button>
           {/* <button className="h-[40px] border-[#E9EBF0] border-[1px] rounded-[8px]"></button> */}
         </div>
@@ -196,16 +196,16 @@ const Categories = () => {
               <CheckBox checked={false} />
             </div>
           )} */}
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[10%] min-w-[45px] uppercase">
+          {/* <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[10%] min-w-[45px] uppercase">
             Surat
+          </h1> */}
+
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%] uppercase">
+            Name
           </h1>
 
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[40%] uppercase">
-            Ady
-          </h1>
-
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%] min-w-[120px] whitespace-nowrap uppercase">
-            DEgişli haryt sany
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[40%] min-w-[120px] whitespace-nowrap uppercase">
+            Text
           </h1>
 
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[15%] uppercase">
@@ -284,7 +284,7 @@ const Categories = () => {
         {selecteds?.length == 0 ? (
           <div className="w-full flex mt-5 justify-between items-center">
             <h1 className="text-[14px] font-[400]">
-              {data?.data?.length} Kategoriýa
+              {data?.data?.length} News
             </h1>
             <Pagination
               meta={categories?.meta}
@@ -388,4 +388,4 @@ const Categories = () => {
   );
 };
 
-export default React.memo(Categories);
+export default React.memo(News);

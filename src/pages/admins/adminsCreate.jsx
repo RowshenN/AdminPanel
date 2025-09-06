@@ -42,7 +42,7 @@ const AdminsCreate = () => {
     <div className="w-full">
       {/* header section */}
       <div className="w-full pb-[30px] flex justify-between items-center">
-        <h1 className="text-[30px] font-[700]">Admin (Ulanyjy) hasaplar</h1>
+        <h1 className="text-[30px] font-[700]">Admin </h1>
       </div>
 
       <div className="w-full min-h-[60vh] p-5 bg-white rounded-[8px]">
@@ -53,7 +53,7 @@ const AdminsCreate = () => {
 
         <div className="flex items-center  justify-between py-[15px]">
           <div className="w-[49%]">
-            <h1 className="text-[16px] font-[500]">Ulanyjy ady</h1>
+            <h1 className="text-[16px] font-[500]">Admin ady</h1>
             <input
               value={user?.name}
               onChange={(e) => {
@@ -65,7 +65,7 @@ const AdminsCreate = () => {
             />
           </div>
           <div className="w-[49%]">
-            <h1 className="text-[16px] font-[500]">Ulanyjy password</h1>
+            <h1 className="text-[16px] font-[500]">Admin password</h1>
             <input
               value={user?.password}
               onChange={(e) => {
@@ -80,7 +80,7 @@ const AdminsCreate = () => {
 
         <div className="flex items-center   justify-between py-[15px]">
           <div className="w-[49%]">
-            <h1 className="text-[16px] font-[500]"> Ulanyjy familýasy</h1>
+            <h1 className="text-[16px] font-[500]"> Admin familýasy</h1>
             <input
               value={user?.lastName}
               onChange={(e) => {
@@ -95,7 +95,7 @@ const AdminsCreate = () => {
             />
           </div>
           <div className="w-[49%]">
-            <h1 className="text-[16px] font-[500]">Telefon nomury</h1>
+            <h1 className="text-[16px] font-[500]">Telefon belgisi</h1>
 
             <input
               value={user?.phone}

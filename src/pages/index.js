@@ -1,9 +1,19 @@
 import { lazy } from "react";
 export const Login = lazy(() => import("./login/login"));
 export const Home = lazy(() => import("./home/Home"));
-export const Categories = lazy(() => import("./category/categories"));
-export const CategoryCreate = lazy(() => import("./category/categoryCreate"));
-export const CategoryUpdate = lazy(() => import("./category/categoryUpdate"));
+
+export const News = lazy(() => import("./news/news"));
+export const NewsCreate = lazy(() => import("./news/newsCreate"));
+export const NewsUpdate = lazy(() => import("./news/newsUpdate"));
+
+export const Service = lazy(() => import("./service/service"));
+export const ServiceCreate = lazy(() => import("./service/serviceCreate"));
+export const ServiceUpdate = lazy(() => import("./service/serviceUpdate"));
+
+export const Works = lazy(() => import("./works/works"));
+export const WorksCreate = lazy(() => import("./works/worksCreate"));
+export const WorksUpdate = lazy(() => import("./works/worksUpdate"));
+
 export const Groups = lazy(() => import("./groups/groups"));
 export const GroupsCreate = lazy(() => import("./groups/groupsCreate"));
 export const GroupsUpdate = lazy(() => import("./groups/groupsUpdate"));
@@ -38,18 +48,16 @@ export const Users = lazy(() => import("./usersOfStandard/users"));
 export const UserCreate = lazy(() => import("./usersOfStandard/usersCreate"));
 export const UserUpdate = lazy(() => import("./usersOfStandard/usersUpdate"));
 
-export const Products = lazy(() => import("./products/products"));
-export const ProductsUpdate = lazy(() => import("./products/productsUpdate"));
-export const ProductsCreate = lazy(() => import("./products/productsCreate"));
+export const Banner = lazy(() => import("./banner/banner"));
+export const BannerUpdate = lazy(() => import("./banner/bannerUpdate"));
+export const BannerCreate = lazy(() => import("./banner/bannerCreate"));
 
 export const Admins = lazy(() => import("./admins/admins"));
 export const AdminsCreate = lazy(() => import("./admins/adminsCreate"));
 export const AdminsUpdate = lazy(() => import("./admins/adminsUpdate"));
 
-export const Transactions = lazy(() => import("./transactions/transactions"));
-export const TransactionsUpdate = lazy(() =>
-  import("./transactions/transactionsUpdate")
-);
-export const TransactionsCreate = lazy(() =>
-  import("./transactions/transactionsCreate")
-);
+export const Contact = lazy(() => import("./contacts/Contact"));
+export const ContactUpdate = lazy(() => import("./contacts/contactUpdate"));
+export const ContactCreate = lazy(() => import("./contacts/contactCreate"));
+
+export const Subscribes = lazy(() => import("./subscribes/Subscribes"));

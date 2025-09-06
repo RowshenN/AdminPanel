@@ -17,7 +17,7 @@ import dayjs, { Dayjs } from "dayjs";
 
 import { DatePicker } from "antd";
 
-const Sargytlar = () => {
+const Subscribes = () => {
   const history = useHistory();
   const [pages, setPages] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -54,9 +54,9 @@ const Sargytlar = () => {
   }, [search]);
 
   if (isLoading) return <PageLoading />;
-  if (error) {
-    return <div>Ýalňyşlyk boldy</div>;
-  }
+  // if (error) {
+  //   return <div>Ýalňyşlyk boldy</div>;
+  // }
 
   console.log(data);
 
@@ -130,7 +130,7 @@ const Sargytlar = () => {
     <div className="w-full">
       {/* header section */}
       <div className="w-full pb-[15px] flex justify-between items-center">
-        <h1 className="text-[30px] font-[700]">Sargytlar</h1>
+        <h1 className="text-[30px] font-[700]">Subscribes</h1>
         <div className="w-fit flex gap-5">
           {/* cashback */}
           {/* payment */}
@@ -176,11 +176,11 @@ const Sargytlar = () => {
             format={"DD-MM-YYYY"}
           />
           {/* <Button
-            onClick={() => history.push({ pathname: "/transactions/create" })}
+            onClick={() => history.push({ pathname: "/contact/create" })}
             className="  !h-[40px] !bg-blue !rounded-[8px] !px-[17px] !w-fit   !text-[14px] !text-white  "
             startDecorator={<Add />}
           >
-            Sargyt döret
+            Contact döret
           </Button> */}
           {/* <button className="h-[40px] border-[#E9EBF0] border-[1px] rounded-[8px]"></button> */}
         </div>
@@ -229,24 +229,24 @@ const Sargytlar = () => {
         {/* Table header */}
         <div className="w-full gap-[20px] flex items-center px-4 h-[40px] rounded-[6px] bg-[#F7F8FA]">
           <h1 className="text-[14px] whitespace-nowrap font-[500] text-[#98A2B2] w-[25%] uppercase">
-            Ady Familýasy
+            Name
           </h1>
 
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[25%] uppercase">
-            Telefon
+            E-mail
           </h1>
 
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[10%]   whitespace-nowrap uppercase">
-            Bahasy
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[30%]   whitespace-nowrap uppercase">
+            Text
           </h1>
 
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%]   whitespace-nowrap uppercase">
+          {/* <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%]   whitespace-nowrap uppercase">
             Cashback
-          </h1>
+          </h1> */}
 
-          <h1 className="text-[14px] font-[500] whitespace-nowrap text-[#98A2B2] w-[20%] text-center uppercase">
+          {/* <h1 className="text-[14px] font-[500] whitespace-nowrap text-[#98A2B2] w-[20%] text-center uppercase">
             Töleg
-          </h1>
+          </h1> */}
         </div>
 
         {/* Table body */}
@@ -313,7 +313,7 @@ const Sargytlar = () => {
 
         <div className="w-full bg-white p-4 rounded-[8px] flex mt-5 justify-between items-center">
           <h1 className="text-[14px] font-[400]">
-            {data?.data?.total} Sargytlar
+            {data?.data?.total} Contact
           </h1>
           <Pagination
             meta={data?.data}
@@ -405,4 +405,4 @@ const Sargytlar = () => {
   );
 };
 
-export default React.memo(Sargytlar);
+export default React.memo(Subscribes);

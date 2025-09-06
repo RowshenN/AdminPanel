@@ -3,23 +3,20 @@ import { BrowserRouter, Switch, Route, Routes } from "react-router-dom";
 import PageLoading from "../components/PageLoading";
 
 import {
-  Categories,
-  CategoryCreate,
-  CategoryUpdate,
+  News,
+  NewsCreate,
+  NewsUpdate,
   Home,
   Login,
   UserCreate,
   UserUpdate,
   Users,
-  Products,
-  ProductsUpdate,
   Admins,
   AdminsUpdate,
   AdminsCreate,
-  Transactions,
-  TransactionsUpdate,
-  TransactionsCreate,
-  ProductsCreate,
+  Contact,
+  ContactUpdate,
+  ContactCreate,
   Groups,
   GroupsCreate,
   GroupsUpdate,
@@ -35,6 +32,16 @@ import {
   About,
   AboutCreate,
   AboutUpdate,
+  Banner,
+  BannerCreate,
+  BannerUpdate,
+  Service,
+  ServiceCreate,
+  ServiceUpdate,
+  Works,
+  WorksCreate,
+  WorksUpdate,
+  Subscribes,
 } from "../pages/index";
 
 import ScrollIntoView from "./ScrollIntoView";
@@ -58,22 +65,43 @@ const App = () => {
 
             <PrivateRoute
               restricted={true}
-              component={Categories}
-              path="/category"
+              component={News}
+              path="/news"
               exact
             />
 
             <PrivateRoute
               restricted={true}
-              component={CategoryCreate}
-              path="/category/create"
+              component={NewsCreate}
+              path="/news/create"
               exact
             />
 
             <PrivateRoute
               restricted={true}
-              component={CategoryUpdate}
-              path="/category/:id"
+              component={NewsUpdate}
+              path="/news/:id"
+              exact
+            />
+
+            <PrivateRoute
+              restricted={true}
+              component={Service}
+              path="/service"
+              exact
+            />
+
+            <PrivateRoute
+              restricted={true}
+              component={ServiceCreate}
+              path="/service/create"
+              exact
+            />
+
+            <PrivateRoute
+              restricted={true}
+              component={ServiceUpdate}
+              path="/service/:id"
               exact
             />
 
@@ -118,19 +146,38 @@ const App = () => {
             <PrivateRoute
               restricted={true}
               component={About}
-              path="/abouts"
+              path="/about"
               exact
             />
             <PrivateRoute
               restricted={true}
               component={AboutCreate}
-              path="/abouts/create"
+              path="/about/create"
               exact
             />
             <PrivateRoute
               restricted={true}
               component={AboutUpdate}
-              path="/abouts/:id"
+              path="/about/:id"
+              exact
+            />
+
+            <PrivateRoute
+              restricted={true}
+              component={Works}
+              path="/works"
+              exact
+            />
+            <PrivateRoute
+              restricted={true}
+              component={WorksCreate}
+              path="/works/create"
+              exact
+            />
+            <PrivateRoute
+              restricted={true}
+              component={WorksUpdate}
+              path="/works/:id"
               exact
             />
 
@@ -193,39 +240,46 @@ const App = () => {
 
             <PrivateRoute
               restricted={true}
-              component={Products}
-              path="/products"
+              component={Banner}
+              path="/banner"
               exact
             />
             <PrivateRoute
               restricted={true}
-              component={ProductsCreate}
-              path="/products/create"
+              component={BannerCreate}
+              path="/banner/create"
               exact
             />
             <PrivateRoute
               restricted={true}
-              component={ProductsUpdate}
-              path="/products/:id"
+              component={BannerUpdate}
+              path="/banner/:id"
               exact
             />
 
             <PrivateRoute
               restricted={true}
-              component={Transactions}
-              path="/transactions"
+              component={Subscribes}
+              path="/subscribes"
+              exact
+            />
+
+            <PrivateRoute
+              restricted={true}
+              component={Contact}
+              path="/contact"
               exact
             />
             <PrivateRoute
               restricted={true}
-              component={TransactionsCreate}
-              path="/transactions/create"
+              component={ContactCreate}
+              path="/contact/create"
               exact
             />
             <PrivateRoute
               restricted={true}
-              component={TransactionsUpdate}
-              path="/transactions/:id"
+              component={ContactUpdate}
+              path="/contact/:id"
               exact
             />
 
