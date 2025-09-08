@@ -17,7 +17,7 @@ import PageLoading from "../../components/PageLoading";
 import {
   useGetTransactionByIdQuery,
   useDeleteTransactionMutation,
-} from "../../services/transactions";
+} from "../../services/contact";
 import { message } from "antd";
 import dayjs from "dayjs";
 

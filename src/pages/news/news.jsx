@@ -1,117 +1,85 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select, { selectClasses } from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import Button from "@mui/joy/Button";
 import Modal from "@mui/joy/Modal";
 import Sheet from "@mui/joy/Sheet";
 import { KeyboardArrowDown, Add } from "@mui/icons-material";
-import CheckBox from "../../components/CheckBox";
 import { axiosInstance } from "../../utils/axiosIntance";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import Pagination from "../../components/pagination";
 import PageLoading from "../../components/PageLoading";
-import { useGetAllCategoriesQuery } from "../../services/category";
+
+import trash from "../../images/Trash.svg";
+import { message } from "antd";
 
 const News = () => {
+  const path = useLocation();
   const history = useHistory();
-  const [pages, setPages] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selecteds, setSelecteds] = useState([]);
-  const [allSelected, setAllSelected] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isDelete, setISDelete] = useState(false);
-  const [search, setSearch] = useState("");
+  const [news, setNews] = useState([]);
   const [filter, setFilter] = useState({
-    limit: 10,
-    page: 1,
-    search: "",
+    search_query: "",
     sort: "default",
+    page: 1,
+    limit: 10,
   });
+  const [isDelete, setISDelete] = useState(false);
+  const [identifier, setIdentifier] = useState(null);
 
-  const { data, error, isLoading } = useGetAllCategoriesQuery(
-    search
-    //    {
-    //   skip: true, // Don't auto-fetch on mount
-    // }
-  );
-  useEffect(() => {
-    const time = setTimeout(() => {
-      setSearch(filter.search);
-    }, 500);
-    return () => clearTimeout(time);
-  }, [filter]);
+  const fetchNews = async () => {
+    try {
+      setLoading(true);
+      const query = new URLSearchParams({
+        name: filter.search_query,
+        order:
+          filter.sort === "default" ? 1 : filter.sort.startsWith("-") ? 2 : 1,
+        deleted: false,
+      }).toString();
 
-  if (isLoading) return <PageLoading />;
-  // if (error) {
-  //   return <div>Ýalňyşlyk boldy</div>;
-  // }
-
-  console.log(data);
-
-  const selectItem = (id) => {
-    let array = selecteds;
-    let bar = false;
-    array.map((item) => {
-      if (item == id) {
-        bar = true;
-      }
-    });
-
-    if (bar) {
-      let newArray = selecteds.filter((item) => {
-        return item != id;
-      });
-      setSelecteds([...newArray]);
-    } else {
-      array.push(id);
-      setSelecteds([...array]);
+      const res = await axiosInstance.get(`/api/news/all?${query}`);
+      setNews(res.data);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching news:", err);
+      setLoading(false);
     }
   };
 
-  const selectAll = () => {
-    setAllSelected(true);
-    let array = [];
-    categories?.data?.map((item) => {
-      array.push(item?.id);
-    });
-    setSelecteds([...array]);
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchNews();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filter.search_query, filter.sort, filter.page]);
 
-  const isSelected = (id) => {
-    let array = selecteds;
-    let bar = false;
-    array?.map((item) => {
-      if (item == id) {
-        bar = true;
-      }
-    });
-    return bar;
-  };
+  console.log("news:  ", news);
+
+  if (loading) return <PageLoading />;
 
   const deletCategories = () => {
-    // setISDelete(false);
-    // axiosInstance
-    //   .post("/categories/delete", {
-    //     categories: selecteds,
-    //   })
-    //   .then((data) => {
-    //     console.log(data.data);
-    //     getCategories();
-    //     setSelecteds([]);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    try {
+      axiosInstance.delete(`/api/news/delete/${identifier}`);
+      message.success("Täzelik üstünlikli pozuldy");
+      setISDelete(false);
+    } catch (error) {
+      message.warning("Täzelik pozulmady");
+      console.log(error);
+    } finally {
+      fetchNews();
+    }
   };
 
   return (
     <div className="w-full">
       {/* header section */}
       <div className="w-full pb-[30px] flex justify-between items-center">
-        <h1 className="text-[30px] font-[700]">News</h1>
+        <h1 className="text-[30px] font-[700]">Täzelikler</h1>
         <div className="w-fit flex gap-5">
           <Select
             placeholder="Hemmesini görkez"
+            onChange={(e, value) => setFilter({ ...filter, sort: value })}
+            value={filter.sort}
             className="!border-[#E9EBF0] !border-[1px] !h-[40px] !bg-white !rounded-[8px] !px-[17px] !w-fit !min-w-[200px] !text-[14px] !text-black  "
             indicator={<KeyboardArrowDown className="!text-[16px]" />}
             sx={{
@@ -123,23 +91,23 @@ const News = () => {
               },
             }}
           >
-            <Option value="Ahlisi">Hemmesini görkez</Option>
-            <Option value="Active">Adyna görä</Option>
-            <Option value="Disactive">Haryt sanyna göra</Option>
-            <Option value="Statusyna">Statusyna görä</Option>
+            <Option value="default">Hemmesini görkez</Option>
+            <Option value="caption">Adyna görä</Option>
+            <Option value="-caption">-Adyna görä</Option>
+            <Option value="created_at">Senesine görä</Option>
+            <Option value="-created_at">-Senesine görä</Option>
           </Select>
           <Button
             onClick={() => history.push({ pathname: "/news/create" })}
-            className="  !h-[40px] !bg-blue !rounded-[8px] !px-[17px] !w-fit   !text-[14px] !text-white  "
+            className="!h-[40px] !bg-blue !rounded-[8px] !px-[17px] !w-fit !text-[14px] !text-white"
             startDecorator={<Add />}
           >
-            New goş
+            Goş
           </Button>
-          {/* <button className="h-[40px] border-[#E9EBF0] border-[1px] rounded-[8px]"></button> */}
         </div>
       </div>
 
-      {/*  Table*/}
+      {/* Table */}
       <div className="w-full p-5 bg-white rounded-[8px]">
         {/* Table search */}
         <div className="w-full mb-4 flex items-center px-4 h-[40px] rounded-[6px] border-[1px] border-[#E9EBF0]">
@@ -172,8 +140,10 @@ const News = () => {
             </defs>
           </svg>
           <input
-            value={filter.search}
-            onChange={(e) => setFilter({ ...filter, search: e.target.value })}
+            value={filter.search_query}
+            onChange={(e) =>
+              setFilter({ ...filter, search_query: e.target.value })
+            }
             type="text"
             className="w-full border-none outline-none h-[38px] pl-4 text-[14px] font-[600] text-black "
             placeholder="Gözleg"
@@ -181,85 +151,57 @@ const News = () => {
         </div>
 
         {/* Table header */}
-        <div className="w-full gap-[30px] flex items-center px-4 h-[40px] rounded-[6px] bg-[#F7F8FA]">
-          {/* {allSelected ? (
-            <div
-              onClick={() => {
-                setSelecteds([]);
-                setAllSelected(false);
-              }}
-            >
-              <CheckBox checked={true} />
-            </div>
-          ) : (
-            <div onClick={() => selectAll()}>
-              <CheckBox checked={false} />
-            </div>
-          )} */}
-          {/* <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[10%] min-w-[45px] uppercase">
+        <div className="w-full gap-[20px] flex items-center px-4 h-[40px] rounded-[6px] bg-[#F7F8FA]">
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[8%] min-w-[45px]">
             Surat
-          </h1> */}
-
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%] uppercase">
-            Name
           </h1>
-
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[40%] min-w-[120px] whitespace-nowrap uppercase">
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[25%]">Ady</h1>
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%] whitespace-nowrap">
             Text
           </h1>
-
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[15%] uppercase">
+          <h1 className="text-[14px] font-[500] whitespace-nowrap text-[#98A2B2] w-[15%] text-center">
             Status
           </h1>
         </div>
 
         {/* Table body */}
-        {data?.data?.map((item, i) => {
-          return loading ? (
-            <PageLoading />
-          ) : (
+        {Array.isArray(news) ? (
+          news.map((item, i) => (
             <div
-              key={"categoryItem" + i}
-              className="w-full gap-[30px] flex items-center px-4 h-[70px] rounded-[6px] bg-white border-b-[1px] border-[#E9EBF0]"
+              key={"news" + i}
+              className="w-full gap-[20px] flex items-center px-4 h-[70px] rounded-[6px] bg-white border-b-[1px] border-[#E9EBF0]"
             >
-              {/* <div onClick={() => selectItem(item?.id)}>
-                {isSelected(item?.id) ? (
-                  <CheckBox checked={true} />
-                ) : (
-                  <CheckBox checked={false} />
-                )}
-              </div> */}
-              <div className="  w-[10%] min-w-[45px]">
+              <div className="w-[8%] min-w-[45px]">
                 <h1 className="rounded-[4px] flex items-center justify-center w-[40px] h-[40px] bg-[#F7F8FA]">
                   <img
-                    src={process.env.REACT_APP_BASE_URL + item?.image}
+                    src={process.env.REACT_APP_BASE_URL + item?.img?.img_url}
                     alt=""
                   />
                 </h1>
               </div>
 
-              <h1 className="text-[14px] font-[500] text-black w-[40%] uppercase">
-                {item?.title}
+              <h1 className="text-[14px] font-[500] text-black w-[25%]">
+                {item?.name_tm}
               </h1>
 
-              <h1 className="text-[14px] font-[500] text-black w-[20%] min-w-[120px] whitespace-nowrap uppercase">
-                {item?.products ? item?.products?.length : 0 + "  "} haryt
+              <h1 className="text-[14px] font-[500] text-black w-[20%]">
+                {item?.text_tm}
               </h1>
 
-              <h1 className="text-[14px] flex items-center justify-between gap-4 font-[500] text-[#98A2B2] w-[15%] uppercase">
+              <h1 className="text-[14px] flex items-center justify-between gap-2 font-[500] text-[#98A2B2] w-[25%]">
                 <div
                   className={`bg-opacity-15 px-4 py-2 w-fit rounded-[12px] ${
                     item?.is_active
                       ? "text-[#44CE62] px-[26px] bg-[#44CE62]"
-                      : "text-red bg-red"
-                  }  `}
+                      : "text-[#E9B500] bg-[#E9B500]"
+                  }`}
                 >
-                  {item?.is_active ? "Active" : "Disactive"}
+                  {item?.is_active ? "Active" : "Garaşylýar"}
                 </div>
 
                 <div
                   onClick={() =>
-                    history.push({ pathname: "/category/" + item?.id })
+                    history.push({ pathname: path?.pathname + "/" + item?.id })
                   }
                   className="cursor-pointer p-2"
                 >
@@ -275,52 +217,23 @@ const News = () => {
                     <circle cx="1.5" cy="13.5" r="1.5" fill="black" />
                   </svg>
                 </div>
+
+                <div
+                  onClick={() => {
+                    setISDelete(true);
+                    setIdentifier(item.id);
+                  }}
+                  className="cursor-pointer w-full h-full "
+                >
+                  <img src={trash} alt="trash" className="h-[20px] w-[25px] " />
+                </div>
               </h1>
             </div>
-          );
-        })}
-
-        {/* Table footer */}
-        {selecteds?.length == 0 ? (
-          <div className="w-full flex mt-5 justify-between items-center">
-            <h1 className="text-[14px] font-[400]">
-              {data?.data?.length} News
-            </h1>
-            <Pagination
-              meta={categories?.meta}
-              pages={pages}
-              pageNo={filter?.page}
-              length={data?.data?.length}
-              next={() => setFilter({ ...filter, page: filter.page + 1 })}
-              prev={() => setFilter({ ...filter, page: filter.page - 1 })}
-              goTo={(item) => setFilter({ ...filter, page: item })}
-            />
-          </div>
+          ))
         ) : (
-          <div className="w-full mt-2 flex justify-between items-center bg-white py-4 px-5 border-[1px] border-[#E9EBF0] rounded-[8px]">
-            <h1 className="text-[14px] font-[400]">
-              {selecteds?.length + " "} sany saýlandy
-            </h1>
-            <div className="w-fit flex gap-6 items-center ">
-              <button
-                onClick={() => {
-                  setSelecteds([]);
-                  setAllSelected(false);
-                }}
-                className="text-[#98A2B2] text-[14px] font-[500] py-[11px] px-[27px] hover:bg-blue hover:text-white rounded-[8px]"
-              >
-                Goýbolsun et
-              </button>
-              <button
-                onClick={() => setISDelete(true)}
-                className="text-white text-[14px] font-[500] py-[11px] px-[27px] bg-[#FF4D4D] rounded-[8px]"
-              >
-                Aýyr
-              </button>
-            </div>
-          </div>
+          <div>Ýok</div>
         )}
-        {/* Selected items delete */}
+
         <Modal
           aria-labelledby="modal-title"
           aria-describedby="modal-desc"
@@ -333,7 +246,7 @@ const News = () => {
           }}
         >
           <Sheet
-            variant="outlined"
+            // variant="outlined"
             sx={{
               maxWidth: 500,
               borderRadius: "md",
@@ -342,8 +255,8 @@ const News = () => {
             }}
           >
             <div className="flex w-[350px] border-b-[1px] border-[#E9EBF0] pb-5 justify-between items-center">
-              <h1 className="text-[20px] font-[500]">Kategoriýa aýyrmak</h1>
-              <button onClick={() => setISDelete(false)}>
+              <h1 className="text-[20px] font-[500]">Täzeligi aýyrmak</h1>
+              <button onClick={() => setISDelete()}>
                 <svg
                   width="16"
                   height="16"
@@ -363,7 +276,7 @@ const News = () => {
 
             <div>
               <h1 className="text-[16px] text-center my-10 font-[400]">
-                Kategoriýany aýyrmak isleýärsiňizmi?
+                Täzeligi aýyrmak isleýärsiňizmi?
               </h1>
 
               <div className="flex gap-[29px] justify-center">

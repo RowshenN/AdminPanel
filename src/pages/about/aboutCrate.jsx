@@ -1,34 +1,32 @@
-import React, { useEffect, useRef, useState } from "react";
-import Switch from "@mui/joy/Switch";
-import Alert from "@mui/joy/Alert";
-import IconButton from "@mui/joy/IconButton";
-import Typography from "@mui/joy/Typography";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import WarningIcon from "@mui/icons-material/Warning";
-import { axiosInstance } from "../../utils/axiosIntance";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import PageLoading from "../../components/PageLoading";
-import { useCreateAutoReplyMutation } from "../../services/messageAutoReplay";
+import { axiosInstance } from "../../utils/axiosIntance";
+import { message } from "antd";
 
-const AutoMessageCreate = () => {
+const AboutCreate = () => {
   const history = useHistory();
   const [about, setAbout] = useState({
     name_tm: "",
     name_ru: "",
     name_en: "",
     text_tm: "",
-    text_en: "",
     text_ru: "",
+    text_en: "",
   });
+  const [loading, setLoading] = useState(false);
 
-  const [createAutoReply] = useCreateAutoReplyMutation();
-
-  const createcategory = async () => {
+  const createAbout = async () => {
     try {
-      await createAutoReply(about).unwrap();
+      setLoading(true);
+      const { data } = await axiosInstance.post("/api/about/create", about);
+      console.log("Created About:", data);
+      message.success("Üusünlikli döredildi");
       history.goBack();
     } catch (err) {
-      console.error("Pozmakda säwlik:", err);
+      message.warning("Üstünlikli döredilmedi");
+      console.error("Error creating About:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,131 +38,39 @@ const AutoMessageCreate = () => {
       </div>
 
       <div className="w-full min-h-[60vh] p-5 bg-white rounded-[8px]">
-        <div className=" flex items-center gap-4 pb-5 border-b-[1px] border-b-[#E9EBF0]">
-          <div className="border-l-[3px] border-blue h-[20px]"></div>
-          <h1 className="text-[20px] font-[500]">Biz barada goş</h1>
-        </div>
-
-        <div className="flex items-center border-t-[1px] justify-between py-[30px]">
-          <div className="w-[380px]">
-            <h1 className="text-[18px] font-[500]">Header_tm</h1>
-            <p className="text-[14px] mt-2 font-[500] text-[#98A2B2]">
-              Header_tm
-            </p>
+        {[
+          { label: "Header_tm", key: "name_tm", placeholder: "Adyny giriz" },
+          { label: "Header_ru", key: "name_ru", placeholder: "Adyny giriz" },
+          { label: "Header_en", key: "name_en", placeholder: "Adyny giriz" },
+          { label: "Text_tm", key: "text_tm", placeholder: "Text_tm giriz" },
+          { label: "Text_en", key: "text_en", placeholder: "Text_en giriz" },
+          { label: "Text_ru", key: "text_ru", placeholder: "Text_ru giriz" },
+        ].map((field) => (
+          <div
+            key={field.key}
+            className="flex items-center border-t-[1px] justify-between py-[30px]"
+          >
+            <div className="w-[380px]">
+              <h1 className="text-[18px] font-[500]">{field.label}</h1>
+              <p className="text-[14px] mt-2 font-[500] text-[#98A2B2]">
+                {field.label}
+              </p>
+            </div>
+            <div className="flex justify-start w-[550px]">
+              <input
+                type="text"
+                value={about[field.key]}
+                onChange={(e) =>
+                  setAbout({ ...about, [field.key]: e.target.value })
+                }
+                placeholder={field.placeholder}
+                className="text-[14px] w-full text-black font-[400] border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none"
+              />
+            </div>
           </div>
-          <div className="flex justify-start w-[550px]">
-            <input
-              value={about.name_tm}
-              onChange={(e) => {
-                setAbout({ ...about, name_tm: e.target.value });
-              }}
-              className="text-[14px] w-full text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
-              placeholder="Adyny giriz"
-              type="text"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center border-t-[1px] justify-between py-[30px]">
-          <div className="w-[380px]">
-            <h1 className="text-[18px] font-[500]">Header_ru</h1>
-            <p className="text-[14px] mt-2 font-[500] text-[#98A2B2]">
-              Header_ru
-            </p>
-          </div>
-          <div className="flex justify-start w-[550px]">
-            <input
-              value={about.name_ru}
-              onChange={(e) => {
-                setAbout({ ...about, name_ru: e.target.value });
-              }}
-              className="text-[14px] w-full text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
-              placeholder="Adyny giriz"
-              type="text"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center border-t-[1px] justify-between py-[30px]">
-          <div className="w-[380px]">
-            <h1 className="text-[18px] font-[500]">Header_en</h1>
-            <p className="text-[14px] mt-2 font-[500] text-[#98A2B2]">
-              Header_en
-            </p>
-          </div>
-          <div className="flex justify-start w-[550px]">
-            <input
-              value={about.name_en}
-              onChange={(e) => {
-                setAbout({ ...about, name_en: e.target.value });
-              }}
-              className="text-[14px] w-full text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
-              placeholder="Adyny giriz"
-              type="text"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center border-t-[1px] justify-between py-[30px]">
-          <div className="w-[380px]">
-            <h1 className="text-[18px] font-[500]">Text_tm</h1>
-            <p className="text-[14px] mt-2 font-[500] text-[#98A2B2]">
-              Text_tm
-            </p>
-          </div>
-          <div className="flex justify-start w-[550px]">
-            <input
-              value={about.text_tm}
-              onChange={(e) => {
-                setAbout({ ...about, text_tm: e.target.value });
-              }}
-              className="text-[14px] w-full text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
-              placeholder="Text_tm giriz"
-              type="text"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center border-t-[1px] justify-between py-[30px]">
-          <div className="w-[380px]">
-            <h1 className="text-[18px] font-[500]">Text_en</h1>
-            <p className="text-[14px] mt-2 font-[500] text-[#98A2B2]">
-              Text_en
-            </p>
-          </div>
-          <div className="flex justify-start w-[550px]">
-            <input
-              value={about.text_en}
-              onChange={(e) => {
-                setAbout({ ...about, text_en: e.target.value });
-              }}
-              className="text-[14px] w-full text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
-              placeholder="Text_en giriz"
-              type="text"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center border-t-[1px] justify-between py-[30px]">
-          <div className="w-[380px]">
-            <h1 className="text-[18px] font-[500]">Text_ru</h1>
-            <p className="text-[14px] mt-2 font-[500] text-[#98A2B2]">
-              Text_ru
-            </p>
-          </div>
-          <div className="flex justify-start w-[550px]">
-            <input
-              value={about.text_ru}
-              onChange={(e) => {
-                setAbout({ ...about, text_ru: e.target.value });
-              }}
-              className="text-[14px] w-full text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
-              placeholder="Text_ru giriz"
-              type="text"
-            />
-          </div>
-        </div>
+        ))}
       </div>
+
       <div className="w-full mt-5 flex justify-end items-center bg-white py-4 px-5 border-[1px] border-[#E9EBF0] rounded-[8px]">
         <div className="w-fit flex gap-6 items-center ">
           <button
@@ -174,10 +80,11 @@ const AutoMessageCreate = () => {
             Goýbolsun et
           </button>
           <button
-            onClick={() => createcategory()}
+            onClick={createAbout}
+            disabled={loading}
             className="text-white text-[14px] font-[500] py-[11px] px-[27px] bg-blue rounded-[8px] hover:bg-opacity-90"
           >
-            Ýatda sakla
+            {loading ? "Ýatda saklanyp bilýär..." : "Ýatda sakla"}
           </button>
         </div>
       </div>
@@ -185,4 +92,4 @@ const AutoMessageCreate = () => {
   );
 };
 
-export default React.memo(AutoMessageCreate);
+export default React.memo(AboutCreate);

@@ -1,34 +1,28 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Switch from "@mui/joy/Switch";
 import Select, { selectClasses } from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
-import { KeyboardArrowDown, Add } from "@mui/icons-material";
-import Alert from "@mui/joy/Alert";
-import { IconButton, Input } from "@mui/joy";
-import Typography from "@mui/joy/Typography";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import WarningIcon from "@mui/icons-material/Warning";
+import { KeyboardArrowDown } from "@mui/icons-material";
 import { useHistory, useParams } from "react-router-dom";
-import Modal from "@mui/joy/Modal";
-import Sheet from "@mui/joy/Sheet";
 import PageLoading from "../../components/PageLoading";
+import { message, Button, Popconfirm } from "antd";
 import {
   useUpdateAdminMutation,
   useGetAdminQuery,
   useDeleteAdminMutation,
 } from "../../services/admin";
-import { message } from "antd";
-import { Button, Popconfirm } from "antd";
 
 const AdminsUpdate = () => {
   const history = useHistory();
   const { id } = useParams();
+
   const [user, setUser] = useState({
-    username: "",
-    password: "",
+    name: "",
+    lastname: "",
+    phone: "",
+    can_message: true,
     position: "",
     type: "",
-    can_message: true,
   });
   const [newPassword, setNewPassword] = useState("");
 
@@ -36,34 +30,34 @@ const AdminsUpdate = () => {
   const [deleteAdmin] = useDeleteAdminMutation();
   const { data: custumers, error, isLoading } = useGetAdminQuery(id);
 
+  // Map backend lastName → frontend lastname
   useEffect(() => {
     if (custumers) {
-      setUser(custumers?.data);
+      setUser({
+        ...custumers,
+        lastname: custumers.lastName,
+        can_message: custumers.can_message ?? true,
+      });
     }
   }, [custumers]);
 
-  // if (isLoading) return <PageLoading />;
-  // if (error) {
-  //   return <div>Ýalňyşlyk boldy</div>;
-  // }
-  const createUser = async () => {
+  const updateUser = async () => {
     try {
-      let bodyData = {
-        username: user?.username,
-        position: user?.position,
-        type: user?.type,
-        can_message: user?.can_message,
+      const bodyData = {
+        name: user.name,
+        lastname: user.lastname,
+        phone: user.phone,
+        can_message: user.can_message,
+        position: user.position,
+        type: user.type,
       };
 
-      newPassword?.length > 0
-        ? (bodyData.password = newPassword)
-        : console.log("");
+      if (newPassword.length > 0) {
+        bodyData.password = newPassword;
+      }
 
-      await updateAdmin({
-        id: id,
-        body: bodyData,
-      });
-      message.success("Üstünlikli döredildi!");
+      await updateAdmin({ id, body: bodyData });
+      message.success("Üstünlikli üýtgedildi!");
       history.goBack();
     } catch (err) {
       console.log(err);
@@ -71,75 +65,83 @@ const AdminsUpdate = () => {
     }
   };
 
+  if (isLoading) return <PageLoading />;
+  if (error) return <div>Ýalňyşlyk boldy</div>;
+
   return (
     <div className="w-full">
-      {/* header section */}
+      {/* Header */}
       <div className="w-full pb-[30px] flex justify-between items-center">
         <h1 className="text-[30px] font-[700]">Admin (Ulanyjy) hasaplar</h1>
       </div>
 
       <div className="w-full min-h-[60vh] p-5 bg-white rounded-[8px]">
-        <div className=" flex items-center gap-4 pb-5 border-b-[1px] border-b-[#E9EBF0]">
+        {/* User Info */}
+        <div className="flex items-center gap-4 pb-5 border-b-[1px] border-b-[#E9EBF0]">
           <div className="border-l-[3px] border-blue h-[20px]"></div>
           <h1 className="text-[20px] font-[500]">Hasap maglumaty</h1>
         </div>
 
-        <div className="flex items-center  justify-between py-[15px]">
+        <div className="flex items-center justify-between py-[15px]">
           <div className="w-[49%]">
-            <h1 className="text-[16px] font-[500]">Ulanyjy ady</h1>
+            <h1 className="text-[16px] font-[500]">Ady</h1>
             <input
-              value={user?.username}
-              onChange={(e) => {
-                setUser({ ...user, username: e.target.value });
-              }}
-              className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
+              value={user.name}
+              onChange={(e) => setUser({ ...user, name: e.target.value })}
+              className="text-[14px] w-full mt-1 text-black font-[400] border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none"
               placeholder="Girizilmedik"
-              type="text"
             />
           </div>
           <div className="w-[49%]">
-            <h1 className="text-[16px] font-[500]">Ulanyjy password</h1>
+            <h1 className="text-[16px] font-[500]">Familiýasy</h1>
             <input
-              value={newPassword}
-              onChange={(e) => {
-                setNewPassword(e.target.value);
-              }}
-              className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
+              value={user.lastname}
+              onChange={(e) => setUser({ ...user, lastname: e.target.value })}
+              className="text-[14px] w-full mt-1 text-black font-[400] border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none"
               placeholder="Girizilmedik"
-              type="text"
             />
           </div>
         </div>
 
-        <div className="flex items-center   justify-between py-[15px]">
+        <div className="flex items-center justify-between py-[15px]">
+          <div className="w-[49%]">
+            <h1 className="text-[16px] font-[500]">Telefon</h1>
+            <input
+              value={user.phone}
+              onChange={(e) => setUser({ ...user, phone: e.target.value })}
+              className="text-[14px] w-full mt-1 text-black font-[400] border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none"
+              placeholder="Girizilmedik"
+            />
+          </div>
+          <div className="w-[49%]">
+            <h1 className="text-[16px] font-[500]">Täze Password</h1>
+            <input
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="text-[14px] w-full mt-1 text-black font-[400] border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none"
+              placeholder="Girizilmedik"
+              type="password"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between py-[15px]">
           <div className="w-[49%]">
             <h1 className="text-[16px] font-[500]">Wezipesi</h1>
             <input
-              value={user?.position}
-              onChange={(e) => {
-                setUser({
-                  ...user,
-                  position: e.target.value,
-                });
-              }}
-              className="text-[14px] w-full mt-1 text-black font-[400]  border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
+              value={user.position}
+              onChange={(e) => setUser({ ...user, position: e.target.value })}
+              className="text-[14px] w-full mt-1 text-black font-[400] border-[1px] border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none"
               placeholder="Girizilmedik"
-              type="text"
             />
           </div>
           <div className="w-[49%]">
             <h1 className="text-[16px] font-[500]">Görnüşi</h1>
-
             <Select
-              value={user?.type}
-              onChange={(e, newValue) => {
-                setUser({
-                  ...user,
-                  type: newValue,
-                });
-              }}
+              value={user.type}
+              onChange={(value) => setUser({ ...user, type: value })}
               placeholder="Hemmesini görkez"
-              className="text-[14px] w-full h-[47px] mt-1 text-black font-[400]  border-[1px] !bg-white !border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none "
+              className="text-[14px] w-full h-[47px] mt-1 text-black font-[400] border-[1px] !bg-white !border-[#98A2B2] rounded-[6px] px-5 py-3 outline-none"
               indicator={<KeyboardArrowDown className="!text-[16px]" />}
               sx={{
                 [`& .${selectClasses.indicator}`]: {
@@ -150,16 +152,13 @@ const AdminsUpdate = () => {
                 },
               }}
             >
-              <Option key={"Erkek"} value={"admin"}>
-                Admin
-              </Option>
-              <Option key={"Aýal"} value={"developer"}>
-                Developer
-              </Option>
+              <Option value="admin">Admin</Option>
+              <Option value="developer">Developer</Option>
             </Select>
           </div>
         </div>
 
+        {/* Status */}
         <div className="flex items-center border-t-[1px] justify-between py-[30px]">
           <div className="w-[380px]">
             <h1 className="text-[18px] font-[500]">Status</h1>
@@ -170,17 +169,15 @@ const AdminsUpdate = () => {
           </div>
           <div className="flex justify-start w-[550px]">
             <Switch
-              checked={user.can_message == true ? true : false}
+              checked={user.can_message ?? false}
               onChange={(event) =>
-                setUser({
-                  ...user,
-                  can_message: event.target.checked ? true : false,
-                })
+                setUser({ ...user, can_message: event.target.checked })
               }
             />
           </div>
         </div>
 
+        {/* Delete Admin */}
         <div className="w-full flex justify-between">
           <div className="w-[380px]">
             <h1 className="text-[18px] font-[500]"> Admin poz</h1>
@@ -192,13 +189,11 @@ const AdminsUpdate = () => {
             title="Maglumaty pozmak!"
             description="Siz çyndan pozmak isleýärsiňizmi?"
             onConfirm={async () => {
-              const respons = await deleteAdmin(id);
-              console.log(respons);
-              respons?.data?.status == 200
+              const response = await deleteAdmin(id);
+              response?.data?.status === 200
                 ? history.goBack()
-                : message.warning(respons.error.data.message);
+                : message.warning(response.error?.data?.message);
             }}
-            // onCancel={cancel}
             okText="Hawa"
             cancelText="Ýok"
           >
@@ -206,10 +201,11 @@ const AdminsUpdate = () => {
           </Popconfirm>
         </div>
       </div>
+
+      {/* Footer Buttons */}
       <div className="sticky bottom-0 py-2 bg-[#F7F8FA] w-full">
-        <div className="  w-full mt-5 flex justify-between items-center bg-white py-4 px-5 border-[1px] border-[#E9EBF0] rounded-[8px]">
-          <div className="flex items-center gap-2"></div>
-          <div className="w-fit flex gap-6 items-center ">
+        <div className="w-full mt-5 flex justify-end items-center bg-white py-4 px-5 border-[1px] border-[#E9EBF0] rounded-[8px]">
+          <div className="w-fit flex gap-6 items-center">
             <button
               onClick={() => history.goBack()}
               className="text-blue text-[14px] font-[500] py-[11px] px-[27px] hover:bg-red hover:text-white rounded-[8px]"
@@ -217,7 +213,7 @@ const AdminsUpdate = () => {
               Goýbolsun et
             </button>
             <button
-              onClick={() => createUser()}
+              onClick={() => updateUser()}
               className="text-white text-[14px] font-[500] py-[11px] px-[27px] bg-blue rounded-[8px] hover:bg-opacity-90"
             >
               Ýatda sakla

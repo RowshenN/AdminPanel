@@ -1,7 +1,7 @@
 // store.js
 import { configureStore } from "@reduxjs/toolkit";
 import { loginApi } from "./services/login";
-import { transactionApi } from "./services/transactions";
+import { contactApi } from "./services/contact";
 import { categoryApi } from "./services/category";
 import { productApi } from "./services/products";
 import { variantApi } from "./services/varriants";
@@ -17,7 +17,7 @@ import { reportApi } from "./services/reports";
 export const store = configureStore({
   reducer: {
     [loginApi.reducerPath]: loginApi.reducer,
-    [transactionApi.reducerPath]: transactionApi.reducer,
+    [contactApi.reducerPath]: contactApi.reducer,
     [categoryApi.reducerPath]: categoryApi.reducer,
     [productApi.reducerPath]: productApi.reducer,
     [variantApi.reducerPath]: variantApi.reducer,
@@ -34,7 +34,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       loginApi.middleware,
-      transactionApi.middleware,
+      contactApi.middleware,
       categoryApi.middleware,
       productApi.middleware,
       variantApi.middleware,

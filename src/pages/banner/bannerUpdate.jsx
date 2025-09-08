@@ -31,7 +31,7 @@ import {
 import { useGetAllCategoriesQuery } from "../../services/category";
 import { message } from "antd";
 
-const ProductsUpdate = () => {
+const BannerUpdate = () => {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
@@ -484,4 +484,4 @@ const ProductsUpdate = () => {
   );
 };
 
-export default React.memo(ProductsUpdate);
+export default React.memo(BannerUpdate);

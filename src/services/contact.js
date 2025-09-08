@@ -1,8 +1,8 @@
 // services/transaction.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { token } from "../utils/token";
-export const transactionApi = createApi({
-  reducerPath: "transactionApi",
+export const contactApi = createApi({
+  reducerPath: "contactApi",
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_BASE_URL,
     headers: { Authorization: `Bearer ${token()}` },
@@ -14,26 +14,31 @@ export const transactionApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Transaction"],
+  tagTypes: ["Contact"],
   endpoints: (builder) => ({
     getFilteredTransactions: builder.query({
-      // Parametr hökmünde sorag parametrlerini geçireris:
-      query: ({ page = 1, limit = 10, startDate, endDate, search, type }) =>
-        `api/transaction/all?page=${page}&limit=${limit}&startDate=${startDate}&endDate=${endDate}&title=${search}&type=${type}`,
-      providesTags: ["Transaction"],
+      query: (params = {}) => {
+        // Safely build query string
+        const query = new URLSearchParams();
+        if (params.name) query.append("name", params.name);
+
+        const qs = query.toString();
+        return qs ? `api/contact/all?${qs}` : `api/contact/all`;
+      },
+      providesTags: ["Contact"],
     }),
 
     getTransactionById: builder.query({
-      query: (id) => `api/transaction/${id}`,
-      providesTags: (result, error, id) => [{ type: "Transaction", id }],
+      query: (id) => `api/contact/${id}`,
+      providesTags: (result, error, id) => [{ type: "Contact", id }],
     }),
 
     deleteTransaction: builder.mutation({
       query: (id) => ({
-        url: `api/transaction/${id}`,
+        url: `api/contact/destroy/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Transaction"],
+      invalidatesTags: ["Contact"],
     }),
   }),
 });
@@ -43,4 +48,4 @@ export const {
   useGetFilteredTransactionsQuery,
   useGetTransactionByIdQuery,
   useDeleteTransactionMutation,
-} = transactionApi;
+} = contactApi;

@@ -247,7 +247,9 @@ export default function Sidebar() {
               </svg>
 
               <ListItemContent>
-                <div className="text-[14px] font-[500] text-black">News</div>
+                <div className="text-[14px] font-[500] text-black">
+                  Täzelikler
+                </div>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
@@ -282,7 +284,7 @@ export default function Sidebar() {
               </svg>
 
               <ListItemContent>
-                <div className="text-[14px] font-[500] text-black">Service</div>
+                <div className="text-[14px] font-[500] text-black">Serwis</div>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
@@ -317,7 +319,7 @@ export default function Sidebar() {
               </svg>
 
               <ListItemContent>
-                <div className="text-[14px] font-[500] text-black">Works</div>
+                <div className="text-[14px] font-[500] text-black">Işler</div>
               </ListItemContent>
             </ListItemButton>
           </ListItem>

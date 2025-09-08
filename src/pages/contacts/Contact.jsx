@@ -12,7 +12,7 @@ import Pagination from "../../components/pagination";
 import PageLoading from "../../components/PageLoading";
 
 import userPicture from "../../images/user.png";
-import { useGetFilteredTransactionsQuery } from "../../services/transactions";
+import { useGetFilteredTransactionsQuery } from "../../services/contact";
 import dayjs, { Dayjs } from "dayjs";
 
 import { DatePicker } from "antd";
@@ -21,30 +21,73 @@ const Contact = () => {
   const history = useHistory();
   const [pages, setPages] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [isDelete, setISDelete] = useState(false);
   const [story, setStory] = useState(null);
   const [reason, setReason] = useState("");
   const { RangePicker } = DatePicker;
 
+  const [contacts, setContacts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isError, setIsError] = useState(null);
+
   const [filter, setFilter] = useState({
-    limit: 10,
     page: 1,
+    limit: 10,
+    name: "",
     search: "",
-    type: "",
     startDate: dayjs().subtract(1, "day"),
-    endDate: dayjs(),
+    endDate: dayjs().format("YYYY-MM-DD"),
+    type: "",
   });
+
   const [search, setSearch] = useState("");
 
-  const { data, error, isLoading } = useGetFilteredTransactionsQuery({
-    page: filter?.page,
-    limit: filter?.limit,
-    search: filter?.search,
-    type: filter?.type,
-    startDate: dayjs(filter?.startDate).format("YYYY-MM-DD"),
-    endDate: dayjs(filter?.endDate).format("YYYY-MM-DD"),
-  });
+  // Fetch contacts
+  const fetchContacts = async () => {
+    setLoading(true);
+    setIsError(null);
+
+    try {
+      const params = {};
+
+      if (filter.page) params.page = filter.page;
+      if (filter.limit) params.limit = filter.limit;
+      if (filter.name) params.name = filter.name;
+      if (filter.search) params.title = filter.search;
+      if (filter.startDate) params.startDate = filter.startDate;
+      if (filter.endDate) params.endDate = filter.endDate;
+      if (filter.type) params.type = filter.type;
+
+      const response = await axiosInstance.get("/api/contact/all", {
+        params,
+      });
+
+      setContacts(response.data);
+
+      // Optional: handle pagination if your backend sends meta info
+      if (response.data?.meta?.last_page) {
+        const totalPages = response.data.meta.last_page;
+        const arr = Array.from({ length: totalPages }, (_, i) => i + 1);
+        setPages(arr);
+      }
+    } catch (err) {
+      console.error(err);
+      setIsError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch contacts on mount and whenever filter changes
+  useEffect(() => {
+    fetchContacts();
+  }, [filter]);
+
+  // if (loading) return <PageLoading />;
+
+  // const { data, error, isLoading } = useGetFilteredTransactionsQuery({
+  //   name: filter.name,
+  // });
 
   useEffect(() => {
     const time = setTimeout(() => {
@@ -53,12 +96,9 @@ const Contact = () => {
     return () => clearTimeout(time);
   }, [search]);
 
-  if (isLoading) return <PageLoading />;
-  // if (error) {
+  // if (isError) {
   //   return <div>Ýalňyşlyk boldy</div>;
   // }
-
-  console.log(data);
 
   // useEffect(() => {
   //   const time = setTimeout(() => {
@@ -96,18 +136,7 @@ const Contact = () => {
   //     });
   // };
 
-  const acceptcomments = (id) => {
-    // id &&
-    //   axiosInstance
-    //     .post("/transactions/accept/" + id)
-    //     .then((data) => {
-    //       console.log(data.data);
-    //       getcomments();
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-  };
+  console.log("contacts:  ", contacts);
 
   const deletecomments = () => {
     //   reason?.length > 0 &&
@@ -236,22 +265,14 @@ const Contact = () => {
             E-mail
           </h1>
 
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[30%]   whitespace-nowrap uppercase">
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[60%]   whitespace-nowrap uppercase">
             Text
           </h1>
-
-          {/* <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%]   whitespace-nowrap uppercase">
-            Cashback
-          </h1> */}
-
-          {/* <h1 className="text-[14px] font-[500] whitespace-nowrap text-[#98A2B2] w-[20%] text-center uppercase">
-            Töleg
-          </h1> */}
         </div>
 
         {/* Table body */}
         <div className="w-full flex flex-wrap">
-          {data?.data?.transactions?.map((item, i) => {
+          {contacts?.map((item, i) => {
             return loading ? (
               <PageLoading />
             ) : (
@@ -260,35 +281,21 @@ const Contact = () => {
                 className="w-full gap-[20px] flex items-center px-4 h-[70px] rounded-[6px] bg-white border-b-[1px] border-[#E9EBF0]"
               >
                 <h1 className="text-[14px] font-[500] text-black w-[25%] uppercase">
-                  {item?.customer?.first_name} {item?.customer?.last_name}
+                  {item?.name}
                 </h1>
 
                 <h1 className="text-[14px] font-[500] text-black w-[25%] uppercase">
-                  {item?.customer?.phone_number}
+                  {item?.email}
                 </h1>
 
-                <h1 className="text-[14px] font-[500] text-black w-[10%]   whitespace-nowrap uppercase">
-                  {item?.amount} TMT
+                <h1 className="text-[14px] font-[500] text-black w-[60%]   whitespace-nowrap uppercase">
+                  {item?.text}
                 </h1>
 
-                <h1 className="text-[14px] font-[500] text-black w-[20%]   whitespace-nowrap uppercase">
-                  {item?.cashback} TMT
-                </h1>
-
-                <h1 className="text-[14px] flex items-center justify-between gap-2 font-[500] text-[#98A2B2] w-[20%]   uppercase">
-                  <div
-                    className={`bg-opacity-15 px-4 py-2 w-fit whitespace-nowrap rounded-[12px] ${
-                      item?.is_active ? "" : ""
-                      // "text-[#44CE62] px-[26px] bg-[#44CE62]"
-                      // : "text-[#E9B500] bg-[#E9B500]"
-                    }  `}
-                  >
-                    {item?.title}
-                  </div>
-
+                {/* <h1 className="text-[14px] flex items-center justify-between gap-2 font-[500] text-[#98A2B2] w-[20%]   uppercase">
                   <div
                     onClick={() =>
-                      history.push({ pathname: "/transactions/" + item?.id })
+                      history.push({ pathname: "/contact/" + item?.id })
                     }
                     className="cursor-pointer p-2"
                   >
@@ -304,7 +311,7 @@ const Contact = () => {
                       <circle cx="1.5" cy="13.5" r="1.5" fill="black" />
                     </svg>
                   </div>
-                </h1>
+                </h1> */}
               </div>
             );
           })}
@@ -312,13 +319,11 @@ const Contact = () => {
         {/* Table footer */}
 
         <div className="w-full bg-white p-4 rounded-[8px] flex mt-5 justify-between items-center">
-          <h1 className="text-[14px] font-[400]">
-            {data?.data?.total} Contact
-          </h1>
+          <h1 className="text-[14px] font-[400]">{contacts?.total} Contact</h1>
           <Pagination
-            meta={data?.data}
+            meta={contacts}
             pages={pages}
-            length={data?.data?.transactions?.length}
+            length={contacts?.length}
             pageNo={filter.page}
             next={() => setFilter({ ...filter, page: filter.page + 1 })}
             prev={() => setFilter({ ...filter, page: filter.page - 1 })}

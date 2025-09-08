@@ -19,7 +19,7 @@ export const adminApi = createApi({
     // 1. Create new admin
     createAdmin: builder.mutation({
       query: (body) => ({
-        url: `api/auth/admin/signup`,
+        url: `api/admin/create`,
         method: "POST",
         body,
       }),
@@ -29,21 +29,21 @@ export const adminApi = createApi({
     // 2. Get all admins
     getAllAdmins: builder.query({
       query: ({ search, limit, page }) =>
-        `api/user/?page=${page}&limit=${limit}&search=${search}`,
+        `api/admin/all?page=${page}&limit=${limit}&search=${search}`,
       providesTags: ["Admin"],
     }),
 
     // 3. Get one admin (user)
     getAdmin: builder.query({
-      query: (id) => `api/user/${id}`,
+      query: (id) => `api/admin/${id}`,
       providesTags: (result, error, id) => [{ type: "Admin", id }],
     }),
 
     // 4. Update one admin (user)
     updateAdmin: builder.mutation({
       query: ({ id, body }) => ({
-        url: `api/user/${id}`,
-        method: "PUT",
+        url: `api/admin/${id}`,
+        method: "PATCH",
         body,
       }),
       invalidatesTags: (result, error, { id }) => [
@@ -55,7 +55,7 @@ export const adminApi = createApi({
     // 5. Delete one admin (user)
     deleteAdmin: builder.mutation({
       query: (id) => ({
-        url: `api/user/${id}`,
+        url: `api/admin/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Admin"],
