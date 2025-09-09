@@ -39,7 +39,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
             </div>
           </div>
         ) : (
-          history.push({ pathname: "/login" })
+          history.push({ pathname: "/signup" })
         )
       }
     />

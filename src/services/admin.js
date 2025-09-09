@@ -33,29 +33,53 @@ export const adminApi = createApi({
       providesTags: ["Admin"],
     }),
 
-    // 3. Get one admin (user)
+    // 3. Get one admin
     getAdmin: builder.query({
       query: (id) => `api/admin/${id}`,
       providesTags: (result, error, id) => [{ type: "Admin", id }],
     }),
 
-    // 4. Update one admin (user)
+    // 4. Update one admin
     updateAdmin: builder.mutation({
-      query: ({ id, body }) => ({
-        url: `api/admin/${id}`,
+      query: (body) => ({
+        url: `api/admin/update`,
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "Admin", id },
-        "Admin",
-      ],
+      invalidatesTags: ["Admin"],
     }),
 
-    // 5. Delete one admin (user)
+    // 5. Delete one admin (soft delete)
     deleteAdmin: builder.mutation({
       query: (id) => ({
-        url: `api/admin/${id}`,
+        url: `api/admin/delete/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Admin"],
+    }),
+
+    // 6. Activate admin
+    activateAdmin: builder.mutation({
+      query: (id) => ({
+        url: `api/admin/active/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Admin"],
+    }),
+
+    // 7. Deactivate admin
+    deactivateAdmin: builder.mutation({
+      query: (id) => ({
+        url: `api/admin/disActive/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Admin"],
+    }),
+
+    // 8. Destroy admin (permanent delete)
+    destroyAdmin: builder.mutation({
+      query: (id) => ({
+        url: `api/admin/destroy/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Admin"],
@@ -69,4 +93,7 @@ export const {
   useGetAdminQuery,
   useUpdateAdminMutation,
   useDeleteAdminMutation,
+  useActivateAdminMutation,
+  useDeactivateAdminMutation,
+  useDestroyAdminMutation,
 } = adminApi;

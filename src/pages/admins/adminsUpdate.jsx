@@ -10,6 +10,7 @@ import {
   useUpdateAdminMutation,
   useGetAdminQuery,
   useDeleteAdminMutation,
+  useDestroyAdminMutation,
 } from "../../services/admin";
 
 const AdminsUpdate = () => {
@@ -27,7 +28,7 @@ const AdminsUpdate = () => {
   const [newPassword, setNewPassword] = useState("");
 
   const [updateAdmin] = useUpdateAdminMutation();
-  const [deleteAdmin] = useDeleteAdminMutation();
+  const [deleteAdmin] = useDestroyAdminMutation();
   const { data: custumers, error, isLoading } = useGetAdminQuery(id);
 
   // Map backend lastName → frontend lastname
@@ -44,8 +45,9 @@ const AdminsUpdate = () => {
   const updateUser = async () => {
     try {
       const bodyData = {
+        id,
         name: user.name,
-        lastname: user.lastname,
+        lastName: user.lastname,
         phone: user.phone,
         can_message: user.can_message,
         position: user.position,
@@ -56,7 +58,7 @@ const AdminsUpdate = () => {
         bodyData.password = newPassword;
       }
 
-      await updateAdmin({ id, body: bodyData });
+      await updateAdmin(bodyData).unwrap();
       message.success("Üstünlikli üýtgedildi!");
       history.goBack();
     } catch (err) {
@@ -190,6 +192,7 @@ const AdminsUpdate = () => {
             description="Siz çyndan pozmak isleýärsiňizmi?"
             onConfirm={async () => {
               const response = await deleteAdmin(id);
+              history.goBack();
               response?.data?.status === 200
                 ? history.goBack()
                 : message.warning(response.error?.data?.message);

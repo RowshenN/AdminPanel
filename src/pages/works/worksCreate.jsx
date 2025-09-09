@@ -3,16 +3,17 @@ import Alert from "@mui/joy/Alert";
 import { IconButton, Typography } from "@mui/joy";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import WarningIcon from "@mui/icons-material/Warning";
-import { axiosInstance } from "../../utils/axiosIntance";
-import { useHistory } from "react-router-dom";
 import Modal from "@mui/joy/Modal";
 import Sheet from "@mui/joy/Sheet";
 import PageLoading from "../../components/PageLoading";
+import { useHistory } from "react-router-dom";
 import { message } from "antd";
+import { useCreateWorkMutation } from "../../services/works";
 
 const WorksCreate = () => {
   const history = useHistory();
-  const [loading, setLoading] = useState(false);
+  const [createWork, { isLoading }] = useCreateWorkMutation();
+
   const [file, setFile] = useState(null);
   const [bigPostPicture, setBigPostPicture] = useState(null);
   const [warning, setWarning] = useState(false);
@@ -25,7 +26,6 @@ const WorksCreate = () => {
     text_tm: "",
     text_ru: "",
     text_en: "",
-    // date: "",
   });
 
   const handleSubmit = async () => {
@@ -48,27 +48,21 @@ const WorksCreate = () => {
     formData.append("text_tm", work.text_tm);
     formData.append("text_ru", work.text_ru);
     formData.append("text_en", work.text_en);
-    // formData.append("date", work.date);
     if (file) formData.append("img", file);
 
-    setLoading(true);
     try {
-      const res = await axiosInstance.post("/api/works/create", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await createWork(formData).unwrap();
       message.success("Iş üstünlikli döredildi!");
-      history.push("/works"); // redirect after creation
+      history.goBack();
     } catch (err) {
       console.error(err);
       message.error("Başartmady!");
-    } finally {
-      setLoading(false);
     }
   };
 
-  return loading ? (
-    <PageLoading />
-  ) : (
+  if (isLoading) return <PageLoading />;
+
+  return (
     <div className="w-full">
       {warning && (
         <Alert

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { axiosInstance } from "../../utils/axiosIntance";
 import { message } from "antd";
+import { useCreateAboutMutation } from "../../services/about";
 
 const AboutCreate = () => {
   const history = useHistory();
@@ -13,20 +13,16 @@ const AboutCreate = () => {
     text_ru: "",
     text_en: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [createAbout, { isLoading }] = useCreateAboutMutation();
 
-  const createAbout = async () => {
+  const handleCreate = async () => {
     try {
-      setLoading(true);
-      const { data } = await axiosInstance.post("/api/about/create", about);
-      console.log("Created About:", data);
+      await createAbout(about).unwrap(); // creates without invalidating getAll
       message.success("Üusünlikli döredildi");
-      history.goBack();
+      history.goBack(); // go back to About list without refetch
     } catch (err) {
-      message.warning("Üstünlikli döredilmedi");
       console.error("Error creating About:", err);
-    } finally {
-      setLoading(false);
+      message.warning("Üstünlikli döredilmedi");
     }
   };
 
@@ -80,11 +76,11 @@ const AboutCreate = () => {
             Goýbolsun et
           </button>
           <button
-            onClick={createAbout}
-            disabled={loading}
+            onClick={handleCreate}
+            disabled={isLoading}
             className="text-white text-[14px] font-[500] py-[11px] px-[27px] bg-blue rounded-[8px] hover:bg-opacity-90"
           >
-            {loading ? "Ýatda saklanyp bilýär..." : "Ýatda sakla"}
+            {isLoading ? "Ýatda saklanylýar..." : "Ýatda sakla"}
           </button>
         </div>
       </div>

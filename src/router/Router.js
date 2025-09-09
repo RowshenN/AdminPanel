@@ -8,18 +8,13 @@ import {
   NewsUpdate,
   Home,
   Login,
-  UserCreate,
-  UserUpdate,
-  Users,
+  Signup,
   Admins,
   AdminsUpdate,
   AdminsCreate,
   Contact,
   ContactUpdate,
   ContactCreate,
-  Groups,
-  GroupsCreate,
-  GroupsUpdate,
   Streets,
   StreetsCreate,
   StreetsUpdate,
@@ -102,25 +97,6 @@ const App = () => {
               restricted={true}
               component={ServiceUpdate}
               path="/service/:id"
-              exact
-            />
-
-            <PrivateRoute
-              restricted={true}
-              component={Groups}
-              path="/groups"
-              exact
-            />
-            <PrivateRoute
-              restricted={true}
-              component={GroupsCreate}
-              path="/groups/create"
-              exact
-            />
-            <PrivateRoute
-              restricted={true}
-              component={GroupsUpdate}
-              path="/groups/:id"
               exact
             />
 
@@ -221,25 +197,6 @@ const App = () => {
 
             <PrivateRoute
               restricted={true}
-              component={Users}
-              path="/users"
-              exact
-            />
-            <PrivateRoute
-              restricted={true}
-              component={UserCreate}
-              path="/users/create"
-              exact
-            />
-            <PrivateRoute
-              restricted={true}
-              component={UserUpdate}
-              path="/users/:id"
-              exact
-            />
-
-            <PrivateRoute
-              restricted={true}
               component={Banner}
               path="/banner"
               exact
@@ -296,6 +253,7 @@ const App = () => {
               path="/admins/create"
               exact
             />
+
             <PrivateRoute
               restricted={true}
               component={AdminsUpdate}
@@ -303,8 +261,9 @@ const App = () => {
               exact
             />
 
-            <Route path="/" component={Login} />
-            <Route path="/login" component={Login} />
+            <Route path="/" exact component={Signup} />
+            <Route path="/login" exact component={Login} />
+            <Route path="/signup" exact component={Signup} />
           </Switch>
         </Suspense>
       </ScrollIntoView>

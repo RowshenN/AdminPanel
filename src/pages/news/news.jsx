@@ -1,78 +1,46 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Select, { selectClasses } from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import Button from "@mui/joy/Button";
 import Modal from "@mui/joy/Modal";
 import Sheet from "@mui/joy/Sheet";
 import { KeyboardArrowDown, Add } from "@mui/icons-material";
-import { axiosInstance } from "../../utils/axiosIntance";
 import { useHistory, useLocation } from "react-router-dom";
-import Pagination from "../../components/pagination";
 import PageLoading from "../../components/PageLoading";
-
-import trash from "../../images/Trash.svg";
 import { message } from "antd";
+
+import {
+  useGetAllNewsQuery,
+  useDestroyNewsMutation,
+} from "../../services/news";
 
 const News = () => {
   const path = useLocation();
   const history = useHistory();
-  const [loading, setLoading] = useState(false);
-  const [news, setNews] = useState([]);
-  const [filter, setFilter] = useState({
-    search_query: "",
-    sort: "default",
-    page: 1,
-    limit: 10,
-  });
+  const [filter, setFilter] = useState({ search_query: "", sort: "default" });
   const [isDelete, setISDelete] = useState(false);
   const [identifier, setIdentifier] = useState(null);
 
-  const fetchNews = async () => {
+  const { data: news = [], isLoading, refetch } = useGetAllNewsQuery();
+  const [destroyNews] = useDestroyNewsMutation();
+
+  const handleDestroy = async () => {
     try {
-      setLoading(true);
-      const query = new URLSearchParams({
-        name: filter.search_query,
-        order:
-          filter.sort === "default" ? 1 : filter.sort.startsWith("-") ? 2 : 1,
-        deleted: false,
-      }).toString();
-
-      const res = await axiosInstance.get(`/api/news/all?${query}`);
-      setNews(res.data);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching news:", err);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchNews();
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [filter.search_query, filter.sort, filter.page]);
-
-  console.log("news:  ", news);
-
-  if (loading) return <PageLoading />;
-
-  const deletCategories = () => {
-    try {
-      axiosInstance.delete(`/api/news/delete/${identifier}`);
+      await destroyNews(identifier).unwrap();
       message.success("Täzelik üstünlikli pozuldy");
       setISDelete(false);
+      refetch();
     } catch (error) {
-      message.warning("Täzelik pozulmady");
-      console.log(error);
-    } finally {
-      fetchNews();
+      console.error(error);
+      message.error("Täzelik pozulmady");
     }
   };
+
+  if (isLoading) return <PageLoading />;
 
   return (
     <div className="w-full">
-      {/* header section */}
+      {/* Header */}
       <div className="w-full pb-[30px] flex justify-between items-center">
         <h1 className="text-[30px] font-[700]">Täzelikler</h1>
         <div className="w-fit flex gap-5">
@@ -80,7 +48,7 @@ const News = () => {
             placeholder="Hemmesini görkez"
             onChange={(e, value) => setFilter({ ...filter, sort: value })}
             value={filter.sort}
-            className="!border-[#E9EBF0] !border-[1px] !h-[40px] !bg-white !rounded-[8px] !px-[17px] !w-fit !min-w-[200px] !text-[14px] !text-black  "
+            className="!border-[#E9EBF0] !border-[1px] !h-[40px] !bg-white !rounded-[8px] !px-[17px] !w-fit !min-w-[200px] !text-[14px] !text-black"
             indicator={<KeyboardArrowDown className="!text-[16px]" />}
             sx={{
               [`& .${selectClasses.indicator}`]: {
@@ -109,54 +77,13 @@ const News = () => {
 
       {/* Table */}
       <div className="w-full p-5 bg-white rounded-[8px]">
-        {/* Table search */}
-        <div className="w-full mb-4 flex items-center px-4 h-[40px] rounded-[6px] border-[1px] border-[#E9EBF0]">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g clipPath="url(#clip0_0_1937)">
-              <circle
-                cx="7.66683"
-                cy="7.66659"
-                r="6.33333"
-                stroke="#C7CED9"
-                strokeWidth="2"
-              />
-              <path
-                d="M12.3335 12.3333L14.6668 14.6666"
-                stroke="#C7CED9"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_0_1937">
-                <rect width="16" height="16" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-          <input
-            value={filter.search_query}
-            onChange={(e) =>
-              setFilter({ ...filter, search_query: e.target.value })
-            }
-            type="text"
-            className="w-full border-none outline-none h-[38px] pl-4 text-[14px] font-[600] text-black "
-            placeholder="Gözleg"
-          />
-        </div>
-
         {/* Table header */}
         <div className="w-full gap-[20px] flex items-center px-4 h-[40px] rounded-[6px] bg-[#F7F8FA]">
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[8%] min-w-[45px]">
             Surat
           </h1>
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[25%]">Ady</h1>
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%] whitespace-nowrap">
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[40%] whitespace-nowrap">
             Text
           </h1>
           <h1 className="text-[14px] font-[500] whitespace-nowrap text-[#98A2B2] w-[15%] text-center">
@@ -183,12 +110,11 @@ const News = () => {
               <h1 className="text-[14px] font-[500] text-black w-[25%]">
                 {item?.name_tm}
               </h1>
-
-              <h1 className="text-[14px] font-[500] text-black w-[20%]">
+              <h1 className="text-[14px] font-[500] text-black w-[45%]">
                 {item?.text_tm}
               </h1>
 
-              <h1 className="text-[14px] flex items-center justify-between gap-2 font-[500] text-[#98A2B2] w-[25%]">
+              <h1 className="text-[14px] flex items-center justify-between gap-2 font-[500] text-[#98A2B2] w-[15%]">
                 <div
                   className={`bg-opacity-15 px-4 py-2 w-fit rounded-[12px] ${
                     item?.is_active
@@ -223,9 +149,19 @@ const News = () => {
                     setISDelete(true);
                     setIdentifier(item.id);
                   }}
-                  className="cursor-pointer w-full h-full "
+                  className="cursor-pointer w-full h-full"
                 >
-                  <img src={trash} alt="trash" className="h-[20px] w-[25px] " />
+                  {/* Pretty red trash SVG */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="red"
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                  >
+                    <path d="M9 3V4H4V6H5V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V6H20V4H15V3H9ZM7 6H17V20H7V6Z" />
+                    <path d="M9 8H11V18H9V8ZM13 8H15V18H13V8Z" />
+                  </svg>
                 </div>
               </h1>
             </div>
@@ -234,9 +170,8 @@ const News = () => {
           <div>Ýok</div>
         )}
 
+        {/* Delete modal */}
         <Modal
-          aria-labelledby="modal-title"
-          aria-describedby="modal-desc"
           open={isDelete}
           onClose={() => setISDelete(false)}
           sx={{
@@ -246,17 +181,11 @@ const News = () => {
           }}
         >
           <Sheet
-            // variant="outlined"
-            sx={{
-              maxWidth: 500,
-              borderRadius: "md",
-              p: 3,
-              boxShadow: "lg",
-            }}
+            sx={{ maxWidth: 500, borderRadius: "md", p: 3, boxShadow: "lg" }}
           >
             <div className="flex w-[350px] border-b-[1px] border-[#E9EBF0] pb-5 justify-between items-center">
               <h1 className="text-[20px] font-[500]">Täzeligi aýyrmak</h1>
-              <button onClick={() => setISDelete()}>
+              <button onClick={() => setISDelete(false)}>
                 <svg
                   width="16"
                   height="16"
@@ -278,7 +207,6 @@ const News = () => {
               <h1 className="text-[16px] text-center my-10 font-[400]">
                 Täzeligi aýyrmak isleýärsiňizmi?
               </h1>
-
               <div className="flex gap-[29px] justify-center">
                 <button
                   onClick={() => setISDelete(false)}
@@ -287,7 +215,7 @@ const News = () => {
                   Goýbolsun et
                 </button>
                 <button
-                  onClick={() => deletCategories()}
+                  onClick={handleDestroy}
                   className="text-[14px] font-[500] text-white hover:bg-[#fd6060] bg-[#FF4D4D] rounded-[8px] px-6 py-3"
                 >
                   Aýyr

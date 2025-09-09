@@ -6,7 +6,11 @@ import { Add } from "@mui/icons-material";
 import { useHistory } from "react-router-dom";
 import Pagination from "../../components/pagination";
 import PageLoading from "../../components/PageLoading";
-import { useGetAllAdminsQuery } from "../../services/admin";
+import {
+  useGetAllAdminsQuery,
+  useDeleteAdminMutation,
+  useDestroyAdminMutation,
+} from "../../services/admin";
 
 const Admins = () => {
   const history = useHistory();
@@ -16,6 +20,7 @@ const Admins = () => {
   const [allSelected, setAllSelected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isDelete, setISDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
   const [filter, setFilter] = useState({
     limit: 10,
     page: 1,
@@ -33,11 +38,15 @@ const Admins = () => {
     deleted: false,
   });
 
+  const [deleteAdmin] = useDestroyAdminMutation();
+
   useEffect(() => {
     if (admins) {
-      setUsers(admins); // backend returns array directly
+      setUsers(admins);
     }
   }, [admins]);
+
+  console.log("admins:  ", admins);
 
   useEffect(() => {
     const time = setTimeout(() => {
@@ -65,8 +74,17 @@ const Admins = () => {
 
   const isSelected = (id) => selecteds.includes(id);
 
-  const deletCategories = () => {
-    // implement deletion if needed
+  const deletCategories = async () => {
+    if (deleteId) {
+      try {
+        await deleteAdmin(deleteId).unwrap();
+        setISDelete(false);
+
+        setDeleteId(null);
+      } catch (err) {
+        console.error("Failed to delete admin:", err);
+      }
+    }
   };
 
   return (
@@ -123,13 +141,13 @@ const Admins = () => {
               key={"adminItem" + i}
               className="w-full gap-[20px] flex items-center px-4 h-[70px] rounded-[6px] bg-white border-b-[1px] border-[#E9EBF0]"
             >
-              <h1 className="text-[14px] font-[500] text-black w-[25%] uppercase">
+              <h1 className="text-[14px] font-[500] text-black w-[25%] ">
                 {item?.name}
               </h1>
-              <h1 className="text-[14px] font-[500] text-black w-[35%] uppercase">
+              <h1 className="text-[14px] font-[500] text-black w-[35%] ">
                 {item?.lastName}
               </h1>
-              <h1 className="text-[14px] font-[500] text-black w-[15%] whitespace-nowrap uppercase">
+              <h1 className="text-[14px] font-[500] text-black w-[15%] whitespace-nowrap ">
                 {item?.phone}
               </h1>
               <h1 className="text-[14px] font-[500] text-black w-[25%] flex gap-2 justify-between whitespace-nowrap uppercase">
@@ -142,23 +160,46 @@ const Admins = () => {
                 >
                   {item?.active ? "Howa" : "Ýok"}
                 </div>
-                <div
-                  onClick={() =>
-                    history.push({ pathname: "/admins/" + item?.id })
-                  }
-                  className="cursor-pointer p-2"
-                >
-                  <svg
-                    width="3"
-                    height="15"
-                    viewBox="0 0 3 15"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                <div className="flex items-center gap-3">
+                  {/* 3 dots */}
+                  <div
+                    onClick={() =>
+                      history.push({ pathname: "/admins/" + item?.id })
+                    }
+                    className="cursor-pointer p-2"
                   >
-                    <circle cx="1.5" cy="1.5" r="1.5" fill="black" />
-                    <circle cx="1.5" cy="7.5" r="1.5" fill="black" />
-                    <circle cx="1.5" cy="13.5" r="1.5" fill="black" />
-                  </svg>
+                    <svg
+                      width="3"
+                      height="15"
+                      viewBox="0 0 3 15"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle cx="1.5" cy="1.5" r="1.5" fill="black" />
+                      <circle cx="1.5" cy="7.5" r="1.5" fill="black" />
+                      <circle cx="1.5" cy="13.5" r="1.5" fill="black" />
+                    </svg>
+                  </div>
+
+                  {/* Trash icon */}
+                  <div
+                    onClick={() => {
+                      setDeleteId(item?.id);
+                      setISDelete(true);
+                    }}
+                    className="cursor-pointer p-2"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="red"
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                    >
+                      <path d="M9 3V4H4V6H5V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V6H20V4H15V3H9ZM7 6H17V20H7V6Z" />
+                      <path d="M9 8H11V18H9V8ZM13 8H15V18H13V8Z" />
+                    </svg>
+                  </div>
                 </div>
               </h1>
             </div>
@@ -231,9 +272,7 @@ const Admins = () => {
             }}
           >
             <div className="flex w-[350px] border-b-[1px] border-[#E9EBF0] pb-5 justify-between items-center">
-              <h1 className="text-[20px] font-[500]">
-                Standard hasaby aýyrmak
-              </h1>
+              <h1 className="text-[20px] font-[500]">Admini aýyrmak</h1>
               <button onClick={() => setISDelete(false)}>
                 <svg
                   width="16"
@@ -254,7 +293,7 @@ const Admins = () => {
 
             <div>
               <h1 className="text-[16px] text-center my-10 font-[400]">
-                Standard hasaby aýyrmak isleýärsiňizmi?
+                Admini aýyrmak isleýärsiňizmi?
               </h1>
 
               <div className="flex gap-[29px] justify-center">
@@ -265,7 +304,7 @@ const Admins = () => {
                   Goýbolsun et
                 </button>
                 <button
-                  onClick={() => deletCategories()}
+                  onClick={deletCategories}
                   className="text-[14px] font-[500] text-white hover:bg-[#fd6060] bg-[#FF4D4D] rounded-[8px] px-6 py-3"
                 >
                   Aýyr

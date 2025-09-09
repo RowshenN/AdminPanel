@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/joy/Button";
 import Modal from "@mui/joy/Modal";
 import Sheet from "@mui/joy/Sheet";
 import { Add } from "@mui/icons-material";
-import { axiosInstance } from "../../utils/axiosIntance";
 import { useHistory } from "react-router-dom";
 import PageLoading from "../../components/PageLoading";
 import Pagination from "../../components/pagination";
+import {
+  useGetAllAboutsQuery,
+  useDestroyAboutMutation,
+} from "../../services/about";
 
 const About = () => {
   const history = useHistory();
-  const [abouts, setAbouts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selecteds, setSelecteds] = useState([]);
-  const [allSelected, setAllSelected] = useState(false);
-  const [isDelete, setISDelete] = useState(false);
   const [filter, setFilter] = useState({
     name: "",
     order: 1,
@@ -23,46 +21,19 @@ const About = () => {
     limit: 10,
   });
 
-  const fetchAbouts = async () => {
-    setLoading(true);
-    try {
-      const query = new URLSearchParams({
-        name: filter.name,
-        order: filter.order,
-        deleted: filter.deleted,
-      }).toString();
+  const { data: abouts = [], isLoading } = useGetAllAboutsQuery(filter);
+  const [destroyAbout] = useDestroyAboutMutation();
 
-      const { data } = await axiosInstance.get(`/api/about/all?${query}`);
-      setAbouts(data);
-    } catch (err) {
-      console.error(err);
+  // state for modal
+  const [isDelete, setIsDelete] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleConfirmDelete = async () => {
+    if (selectedId) {
+      await destroyAbout(selectedId);
+      setIsDelete(false);
+      setSelectedId(null);
     }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchAbouts();
-  }, [filter]);
-
-  const selectItem = (id) => {
-    if (selecteds.includes(id)) {
-      setSelecteds(selecteds.filter((item) => item !== id));
-    } else {
-      setSelecteds([...selecteds, id]);
-    }
-  };
-
-  const selectAll = () => {
-    setAllSelected(true);
-    setSelecteds(abouts.map((item) => item.id));
-  };
-
-  const isSelected = (id) => selecteds.includes(id);
-
-  const deleteAbouts = async () => {
-    // Implement your delete logic here
-    setISDelete(false);
-    setSelecteds([]);
   };
 
   return (
@@ -99,27 +70,31 @@ const About = () => {
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[35%] uppercase">
             Header
           </h1>
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[55%] min-w-[120px] whitespace-nowrap uppercase">
+          <h1 className="text-[14px] font-[500]  text-[#98A2B2] w-[55%] min-w-[120px] whitespace-nowrap uppercase">
             Text
+          </h1>
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[10%] uppercase">
+            Action
           </h1>
         </div>
 
         {/* Table Body */}
-        {loading ? (
+        {isLoading ? (
           <PageLoading />
         ) : (
-          abouts.map((item, i) => (
+          abouts.map((item) => (
             <div
-              key={i}
+              key={item.id}
               className="w-full gap-[30px] flex items-center px-4 h-[70px] rounded-[6px] bg-white border-b-[1px] border-[#E9EBF0]"
             >
-              <h1 className="text-[14px] font-[500] text-black w-[35%] uppercase">
+              <h1 className="text-[14px] font-[500] text-black w-[35%]">
                 {item?.name_tm}
               </h1>
-              <h1 className="text-[14px] font-[500] text-black w-[45%] min-w-[120px] uppercase">
+              <h1 className="text-[14px]  font-[500] text-black w-[55%] min-w-[120px]">
                 {item?.text_tm}
               </h1>
-              <h1 className="text-[14px] flex items-center justify-between gap-4 font-[500] text-[#98A2B2] w-[15%] uppercase">
+              <div className="flex gap-3 items-center w-[10%]">
+                {/* 3 dots */}
                 <div
                   onClick={() => history.push("/about/" + item?.id)}
                   className="cursor-pointer p-2"
@@ -136,7 +111,27 @@ const About = () => {
                     <circle cx="1.5" cy="13.5" r="1.5" fill="black" />
                   </svg>
                 </div>
-              </h1>
+
+                {/* Red Trash */}
+                <button
+                  onClick={() => {
+                    setSelectedId(item.id);
+                    setIsDelete(true);
+                  }}
+                  className="cursor-pointer p-2"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="red"
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                  >
+                    <path d="M9 3V4H4V6H5V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V6H20V4H15V3H9ZM7 6H17V20H7V6Z" />
+                    <path d="M9 8H11V18H9V8ZM13 8H15V18H13V8Z" />
+                  </svg>
+                </button>
+              </div>
             </div>
           ))
         )}
@@ -155,10 +150,10 @@ const About = () => {
           />
         </div>
 
-        {/* Delete Modal */}
+        {/* Delete Confirm Modal */}
         <Modal
           open={isDelete}
-          onClose={() => setISDelete(false)}
+          onClose={() => setIsDelete(false)}
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -171,7 +166,22 @@ const About = () => {
           >
             <div className="flex w-[350px] border-b-[1px] border-[#E9EBF0] pb-5 justify-between items-center">
               <h1 className="text-[20px] font-[500]">About aýyrmak</h1>
-              <button onClick={() => setISDelete(false)}>X</button>
+              <button onClick={() => setIsDelete(false)}>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15 1L1.00006 14.9999M0.999999 0.999943L14.9999 14.9999"
+                    stroke="#B1B1B1"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
             </div>
 
             <div>
@@ -180,13 +190,13 @@ const About = () => {
               </h1>
               <div className="flex gap-[29px] justify-center">
                 <button
-                  onClick={() => setISDelete(false)}
+                  onClick={() => setIsDelete(false)}
                   className="text-[14px] font-[500] px-6 py-3 text-[#98A2B2] rounded-[8px] hover:bg-blue hover:text-white"
                 >
                   Goýbolsun et
                 </button>
                 <button
-                  onClick={deleteAbouts}
+                  onClick={handleConfirmDelete}
                   className="text-[14px] font-[500] text-white hover:bg-[#fd6060] bg-[#FF4D4D] rounded-[8px] px-6 py-3"
                 >
                   Aýyr

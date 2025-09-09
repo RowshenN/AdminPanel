@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Select, { selectClasses } from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import Button from "@mui/joy/Button";
 import Modal from "@mui/joy/Modal";
 import Sheet from "@mui/joy/Sheet";
 import { KeyboardArrowDown, Add } from "@mui/icons-material";
-import { axiosInstance } from "../../utils/axiosIntance";
 import { useHistory, useLocation } from "react-router-dom";
 import Pagination from "../../components/pagination";
 import PageLoading from "../../components/PageLoading";
+import {
+  useGetAllBannersQuery,
+  useDestroyBannerMutation,
+} from "../../services/banner";
 
 const Banner = () => {
   const history = useHistory();
   const path = useLocation();
 
-  const [banners, setBanners] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [isDelete, setISDelete] = useState(false);
-  const [selecteds, setSelecteds] = useState([]);
-  const [allSelected, setAllSelected] = useState(false);
   const [filter, setFilter] = useState({
     type: path?.pathname.includes("/banner") ? "banner" : "",
     order: 1,
@@ -28,55 +26,24 @@ const Banner = () => {
     limit: 10,
   });
 
-  // Fetch banners from backend
-  const fetchBanners = async () => {
-    setLoading(true);
-    try {
-      const query = new URLSearchParams({
-        type: filter.type,
-        order: filter.order,
-        deleted: filter.deleted,
-        name: filter.name,
-      }).toString();
+  const { data: banners = [], isLoading } = useGetAllBannersQuery({
+    type: filter.type,
+    order: filter.order,
+    deleted: filter.deleted,
+    name: filter.name,
+  });
 
-      const { data } = await axiosInstance.get(`/api/banner/all`);
-      console.log("data:  ", data);
-      setBanners(data);
-    } catch (err) {
-      console.error(err);
-    }
-    setLoading(false);
-  };
+  console.log("databanner: ", banners);
+  const [destroyBanner] = useDestroyBannerMutation();
 
-  console.log("banners:  ", banners);
+  const [isDelete, setIsDelete] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
-  useEffect(() => {
-    fetchBanners();
-  }, [filter]);
-
-  const selectItem = (id) => {
-    if (selecteds.includes(id)) {
-      setSelecteds(selecteds.filter((item) => item !== id));
-    } else {
-      setSelecteds([...selecteds, id]);
-    }
-  };
-
-  const selectAll = () => {
-    setAllSelected(true);
-    setSelecteds(banners.map((item) => item.id));
-  };
-
-  const isSelected = (id) => selecteds.includes(id);
-
-  const deleteBanners = async () => {
-    try {
-      await axiosInstance.post("/api/banner/delete", { banners: selecteds });
-      setSelecteds([]);
-      setISDelete(false);
-      fetchBanners();
-    } catch (err) {
-      console.error(err);
+  const handleConfirmDelete = async () => {
+    if (selectedId) {
+      await destroyBanner(selectedId);
+      setIsDelete(false);
+      setSelectedId(null);
     }
   };
 
@@ -131,48 +98,49 @@ const Banner = () => {
         </div>
 
         {/* Table Header */}
-        <div className="w-full gap-[20px] flex items-center px-4 h-[40px] rounded-[6px] bg-[#F7F8FA]">
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[8%] min-w-[45px] uppercase">
+        <div className="w-full gap-[10px] flex items-center px-4 h-[40px] rounded-[6px] bg-[#F7F8FA]">
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[10%] min-w-[60px] uppercase">
             Surat
           </h1>
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[25%] uppercase">
             Ady
           </h1>
-          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%] uppercase">
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[30%] uppercase">
             Text
           </h1>
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[15%] text-center uppercase">
             Status
           </h1>
+          <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[20%] text-center uppercase">
+            Action
+          </h1>
         </div>
 
         {/* Table Body */}
-        {loading ? (
+        {isLoading ? (
           <PageLoading />
         ) : (
           banners.map((item, i) => (
             <div
               key={i}
-              className="w-full gap-[20px] flex items-center px-4 h-[70px] rounded-[6px] bg-white border-b-[1px] border-[#E9EBF0]"
+              className="w-full gap-[10px] flex items-center px-4 h-[70px] rounded-[6px] bg-white border-b-[1px] border-[#E9EBF0]"
             >
-              <div className="w-[8%] min-w-[45px]">
-                <h1 className="rounded-[4px] flex items-center justify-center w-[40px] h-[40px] bg-[#F7F8FA]">
-                  <img
-                    src={process.env.REACT_APP_BASE_URL + item?.img}
-                    alt=""
-                  />
-                </h1>
+              <div className="w-[10%] min-w-[60px] flex justify-start">
+                <img
+                  src={process.env.REACT_APP_BASE_URL + item?.img}
+                  alt=""
+                  className="w-[40px] h-[40px] rounded-[4px]"
+                />
               </div>
 
-              <h1 className="text-[14px] font-[500] text-black w-[25%] ">
+              <h1 className="text-[14px] font-[500] text-black w-[25%]">
                 {item?.title_tm}
               </h1>
-
-              <h1 className="text-[14px] font-[500] text-black w-[20%] ">
+              <h1 className="text-[14px] font-[500] text-black w-[30%]">
                 {item?.text_tm}
               </h1>
 
-              <h1 className="text-[14px] flex items-center justify-between gap-2 font-[500] text-[#98A2B2] w-[15%] ">
+              <h1 className="text-[14px] flex items-center justify-center font-[500] text-[#98A2B2] w-[15%]">
                 <div
                   className={`bg-opacity-15 px-4 py-2 w-fit rounded-[12px] ${
                     !item.deleted
@@ -182,7 +150,11 @@ const Banner = () => {
                 >
                   {!item.deleted ? "Active" : "Garaşylýar"}
                 </div>
+              </h1>
 
+              {/* Actions */}
+              <div className="flex gap-3 items-center w-[20%] justify-center">
+                {/* Three dots */}
                 <div
                   onClick={() => history.push(`/banner/${item?.id}`)}
                   className="cursor-pointer p-2"
@@ -199,16 +171,36 @@ const Banner = () => {
                     <circle cx="1.5" cy="13.5" r="1.5" fill="black" />
                   </svg>
                 </div>
-              </h1>
+
+                {/* Red Trash */}
+                <button
+                  onClick={() => {
+                    setSelectedId(item.id);
+                    setIsDelete(true);
+                  }}
+                  className="cursor-pointer p-2"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="red"
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                  >
+                    <path d="M9 3V4H4V6H5V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V6H20V4H15V3H9ZM7 6H17V20H7V6Z" />
+                    <path d="M9 8H11V18H9V8ZM13 8H15V18H13V8Z" />
+                  </svg>
+                </button>
+              </div>
             </div>
           ))
         )}
       </div>
 
-      {/* Delete Modal */}
+      {/* Delete Confirm Modal */}
       <Modal
         open={isDelete}
-        onClose={() => setISDelete(false)}
+        onClose={() => setIsDelete(false)}
         sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
       >
         <Sheet
@@ -217,23 +209,23 @@ const Banner = () => {
         >
           <div className="flex w-[350px] border-b-[1px] border-[#E9EBF0] pb-5 justify-between items-center">
             <h1 className="text-[20px] font-[500]">Banner aýyrmak</h1>
-            <button onClick={() => setISDelete(false)}>X</button>
+            <button onClick={() => setIsDelete(false)}>X</button>
           </div>
 
           <div>
             <h1 className="text-[16px] text-center my-10 font-[400]">
-              Banny aýyrmak isleýärsiňizmi?
+              Banner aýyrmak isleýärsiňizmi?
             </h1>
 
             <div className="flex gap-[29px] justify-center">
               <button
-                onClick={() => setISDelete(false)}
+                onClick={() => setIsDelete(false)}
                 className="text-[14px] font-[500] px-6 py-3 text-[#98A2B2] rounded-[8px] hover:bg-blue hover:text-white"
               >
                 Goýbolsun et
               </button>
               <button
-                onClick={() => deleteBanners()}
+                onClick={handleConfirmDelete}
                 className="text-[14px] font-[500] text-white hover:bg-[#fd6060] bg-[#FF4D4D] rounded-[8px] px-6 py-3"
               >
                 Aýyr

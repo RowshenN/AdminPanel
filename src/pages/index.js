@@ -1,5 +1,6 @@
 import { lazy } from "react";
 export const Login = lazy(() => import("./login/login"));
+export const Signup = lazy(() => import("./login/signup"));
 export const Home = lazy(() => import("./home/Home"));
 
 export const News = lazy(() => import("./news/news"));
@@ -13,10 +14,6 @@ export const ServiceUpdate = lazy(() => import("./service/serviceUpdate"));
 export const Works = lazy(() => import("./works/works"));
 export const WorksCreate = lazy(() => import("./works/worksCreate"));
 export const WorksUpdate = lazy(() => import("./works/worksUpdate"));
-
-export const Groups = lazy(() => import("./groups/groups"));
-export const GroupsCreate = lazy(() => import("./groups/groupsCreate"));
-export const GroupsUpdate = lazy(() => import("./groups/groupsUpdate"));
 
 export const Streets = lazy(() => import("./streets/streets"));
 export const StreetsCreate = lazy(() => import("./streets/streetsCreate"));
@@ -43,10 +40,6 @@ export const MessageSendCreate = lazy(() =>
 export const MessageSendUpdate = lazy(() =>
   import("./messageSend/messageSendUpdate")
 );
-
-export const Users = lazy(() => import("./usersOfStandard/users"));
-export const UserCreate = lazy(() => import("./usersOfStandard/usersCreate"));
-export const UserUpdate = lazy(() => import("./usersOfStandard/usersUpdate"));
 
 export const Banner = lazy(() => import("./banner/banner"));
 export const BannerUpdate = lazy(() => import("./banner/bannerUpdate"));

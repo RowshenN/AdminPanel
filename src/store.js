@@ -2,13 +2,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { loginApi } from "./services/login";
 import { contactApi } from "./services/contact";
-import { categoryApi } from "./services/category";
+import { bannerApi } from "./services/banner";
 import { productApi } from "./services/products";
 import { variantApi } from "./services/varriants";
-import { customerApi } from "./services/custumers";
+import { worksApi } from "./services/works";
 import { adminApi } from "./services/admin";
-import { groupApi } from "./services/group";
-import { messageAutoReplyApi } from "./services/messageAutoReplay";
+import { aboutApi } from "./services/about";
+import { newsApi } from "./services/news";
 import { messageSendApi } from "./services/messageSend";
 import { messageTemplateApi } from "./services/messageTamplate";
 import { streetApi } from "./services/street";
@@ -18,14 +18,14 @@ export const store = configureStore({
   reducer: {
     [loginApi.reducerPath]: loginApi.reducer,
     [contactApi.reducerPath]: contactApi.reducer,
-    [categoryApi.reducerPath]: categoryApi.reducer,
+    [bannerApi.reducerPath]: bannerApi.reducer,
     [productApi.reducerPath]: productApi.reducer,
     [variantApi.reducerPath]: variantApi.reducer,
-    [customerApi.reducerPath]: customerApi.reducer,
+    [worksApi.reducerPath]: worksApi.reducer,
 
     [adminApi.reducerPath]: adminApi.reducer,
-    [groupApi.reducerPath]: groupApi.reducer,
-    [messageAutoReplyApi.reducerPath]: messageAutoReplyApi.reducer,
+    [aboutApi.reducerPath]: aboutApi.reducer,
+    [newsApi.reducerPath]: newsApi.reducer,
     [messageSendApi.reducerPath]: messageSendApi.reducer,
     [messageTemplateApi.reducerPath]: messageTemplateApi.reducer,
     [streetApi.reducerPath]: streetApi.reducer,
@@ -35,13 +35,13 @@ export const store = configureStore({
     getDefaultMiddleware().concat(
       loginApi.middleware,
       contactApi.middleware,
-      categoryApi.middleware,
+      bannerApi.middleware,
       productApi.middleware,
       variantApi.middleware,
-      customerApi.middleware,
+      worksApi.middleware,
       adminApi.middleware,
-      groupApi.middleware,
-      messageAutoReplyApi.middleware,
+      aboutApi.middleware,
+      newsApi.middleware,
       messageSendApi.middleware,
       messageTemplateApi.middleware,
       streetApi.middleware,

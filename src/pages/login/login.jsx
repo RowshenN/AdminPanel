@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { Context } from "../../context/context";
 import loginImg from "../../images/login.svg";
 import { useLoginMutation } from "../../services/login";
+import { message } from "antd";
 
 const Login = () => {
   const [passType, setPassType] = useState("password");
@@ -10,8 +11,6 @@ const Login = () => {
   const { dil } = useContext(Context);
 
   const [user, setUser] = useState({
-    name: "",
-    lastname: "",
     phone: "",
     password: "",
   });
@@ -26,8 +25,11 @@ const Login = () => {
 
       if (result?.token) {
         localStorage.setItem("userData", JSON.stringify(result));
+        message.success("Üstünlikli!");
         window.open("/home", "_self"); // or history.push("/home")
       } else {
+        message.warning("Ilki registratsiýa bolmaly!");
+        history.push("/signup");
         console.warn("No token in response:", result);
       }
     } catch (err) {
@@ -46,36 +48,6 @@ const Login = () => {
         </div>
 
         <div className="flex flex-col items-baseline justify-center gap-5">
-          <div className="w-[400px] flex flex-wrap gap-1">
-            <label className="text-[16px] font-[500]" htmlFor="name">
-              Ulanyjy ady
-            </label>
-            <input
-              value={user.name}
-              onChange={(e) => setUser({ ...user, name: e.target.value })}
-              onKeyDown={(e) => e.key === "Enter" && sign()}
-              id="name"
-              className="px-4 text-black text-[16px] font-[400] h-[50px] w-[400px] rounded-[6px] border border-[#98A2B2] outline-none"
-              type="text"
-              placeholder="Giriz"
-            />
-          </div>
-
-          <div className="w-[400px] flex flex-wrap gap-1">
-            <label className="text-[16px] font-[500]" htmlFor="lastname">
-              Ulanyjy familýasy
-            </label>
-            <input
-              value={user.lastname}
-              onChange={(e) => setUser({ ...user, lastname: e.target.value })}
-              onKeyDown={(e) => e.key === "Enter" && sign()}
-              id="lastname"
-              className="px-4 text-black text-[16px] font-[400] h-[50px] w-[400px] rounded-[6px] border border-[#98A2B2] outline-none"
-              type="text"
-              placeholder="Giriz"
-            />
-          </div>
-
           <div className="w-[400px] flex flex-wrap gap-1">
             <label className="text-[16px] font-[500]" htmlFor="phone">
               Ulanyjy telefon belgisi
@@ -104,6 +76,18 @@ const Login = () => {
               type={passType}
               placeholder="*********"
             />
+          </div>
+
+          <div className="px-4 text-black text-[16px] font-[400] h-[50px] w-[400px] rounded-[6px] border border-[#98A2B2] flex items-center justify-start ">
+            <p className="text-[18px] font-[sfmedium] ">
+              Registratsiýa bolmadyk bolsanyz{" "}
+              <span
+                onClick={() => history.push("/signup")}
+                className="cursor-pointer text-blue "
+              >
+                Registratsiýa
+              </span>{" "}
+            </p>
           </div>
 
           <button

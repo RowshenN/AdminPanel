@@ -8,9 +8,20 @@ export const loginApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl }),
   tagTypes: ["Admin"],
   endpoints: (builder) => ({
-    login: builder.mutation({
+    signup: builder.mutation({
       query: (credentials) => ({
         url: "api/admin/create",
+        method: "POST",
+        body: credentials,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["Admin"],
+    }),
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: "api/admin/login",
         method: "POST",
         body: credentials,
         headers: {
@@ -22,4 +33,4 @@ export const loginApi = createApi({
   }),
 });
 
-export const { useLoginMutation } = loginApi;
+export const { useLoginMutation, useSignupMutation } = loginApi;
