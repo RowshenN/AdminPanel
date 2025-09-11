@@ -1,39 +1,64 @@
-// services/transaction.js
+// services/contact.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { token } from "../utils/token";
+
 export const contactApi = createApi({
   reducerPath: "contactApi",
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_BASE_URL,
-    headers: { Authorization: `Bearer ${token()}` },
     prepareHeaders: (headers) => {
-      // const token = localStorage.getItem("token");
       if (token()) {
         headers.set("Authorization", `Bearer ${token()}`);
       }
+      headers.set("Accept", "application/json");
       return headers;
     },
   }),
   tagTypes: ["Contact"],
   endpoints: (builder) => ({
-    getFilteredTransactions: builder.query({
+    // 1. Get all contacts (with optional search)
+    getAllContacts: builder.query({
       query: (params = {}) => {
-        // Safely build query string
         const query = new URLSearchParams();
         if (params.name) query.append("name", params.name);
-
-        const qs = query.toString();
-        return qs ? `api/contact/all?${qs}` : `api/contact/all`;
+        if (params.page) query.append("page", params.page);
+        if (params.limit) query.append("limit", params.limit);
+        return `api/contact/all?${query.toString()}`;
       },
       providesTags: ["Contact"],
     }),
 
-    getTransactionById: builder.query({
+    // 2. Get contact by ID
+    getContactById: builder.query({
       query: (id) => `api/contact/${id}`,
       providesTags: (result, error, id) => [{ type: "Contact", id }],
     }),
 
-    deleteTransaction: builder.mutation({
+    // 3. Create a contact
+    createContact: builder.mutation({
+      query: (body) => ({
+        url: `api/contact/create`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Contact"],
+    }),
+
+    // 4. Update a contact
+    updateContact: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `api/contact/update`,
+        method: "PATCH",
+        body: { id, ...body },
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Contact", id },
+        "Contact",
+      ],
+    }),
+
+    // 5. Delete a contact
+    deleteContact: builder.mutation({
       query: (id) => ({
         url: `api/contact/destroy/${id}`,
         method: "DELETE",
@@ -43,9 +68,11 @@ export const contactApi = createApi({
   }),
 });
 
-// Hook eksporty:
+// Export hooks
 export const {
-  useGetFilteredTransactionsQuery,
-  useGetTransactionByIdQuery,
-  useDeleteTransactionMutation,
+  useGetAllContactsQuery,
+  useGetContactByIdQuery,
+  useCreateContactMutation,
+  useUpdateContactMutation,
+  useDeleteContactMutation,
 } = contactApi;

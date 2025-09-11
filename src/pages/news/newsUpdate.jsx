@@ -1,3 +1,4 @@
+// pages/news/NewsUpdate.jsx
 import React, { useEffect, useRef, useState } from "react";
 import Alert from "@mui/joy/Alert";
 import IconButton from "@mui/joy/IconButton";
@@ -29,7 +30,6 @@ const NewsUpdate = () => {
     img: null,
   });
   const [file, setFile] = useState(null);
-  const [newFile, setNewFile] = useState(false);
   const [warning, setWarning] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +38,7 @@ const NewsUpdate = () => {
   const [destroyNews] = useDestroyNewsMutation();
 
   useEffect(() => {
-    if (data?.data) setNews(data.data);
+    if (data) setNews(data); // backend returns news object directly
   }, [data]);
 
   if (isLoading) return <PageLoading />;
@@ -58,6 +58,7 @@ const NewsUpdate = () => {
     }
 
     const formData = new FormData();
+    formData.append("id", id); // backend needs id in body for update
     formData.append("name_tm", news.name_tm);
     formData.append("name_ru", news.name_ru);
     formData.append("name_en", news.name_en);
@@ -83,7 +84,7 @@ const NewsUpdate = () => {
     const type = f.type?.split("/")[1];
     if (
       (type === "png" || type === "jpg" || type === "jpeg") &&
-      f.size <= 1024 * 100
+      f.size <= 1024 * 1000 // up to 1MB
     ) {
       setFile(f);
     } else {
@@ -220,10 +221,13 @@ const NewsUpdate = () => {
               title="Täzeligi pozmak!"
               description="Siz çyndan pozmak isleýärsiňizmi?"
               onConfirm={async () => {
-                const resp = await destroyNews(id).unwrap();
-                resp?.status === 200
-                  ? history.goBack()
-                  : message.warning("Pozmak başartmady!");
+                try {
+                  await destroyNews(id).unwrap();
+                  message.success("Täzelik pozuldy");
+                  history.goBack();
+                } catch (err) {
+                  message.warning("Pozmak başartmady!");
+                }
               }}
               okText="Hawa"
               cancelText="Ýok"

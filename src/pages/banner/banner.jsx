@@ -26,12 +26,14 @@ const Banner = () => {
     limit: 10,
   });
 
-  const { data: banners = [], isLoading } = useGetAllBannersQuery({
+  const { data: rawBanners = [], isLoading } = useGetAllBannersQuery({
     type: filter.type,
     order: filter.order,
     deleted: filter.deleted,
     name: filter.name,
   });
+
+  const banners = Array.isArray(rawBanners) ? [...rawBanners].reverse() : [];
 
   console.log("databanner: ", banners);
   const [destroyBanner] = useDestroyBannerMutation();

@@ -1,3 +1,4 @@
+// services/news.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { token } from "../utils/token";
 
@@ -39,8 +40,8 @@ export const newsApi = createApi({
 
     // 4. Update news
     updateNews: builder.mutation({
-      query: (formData) => ({
-        url: `api/news/update`,
+      query: ({ id, formData }) => ({
+        url: `api/news/update`, // backend does not need ID in path
         method: "PATCH",
         body: formData,
       }),

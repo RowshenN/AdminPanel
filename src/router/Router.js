@@ -15,15 +15,6 @@ import {
   Contact,
   ContactUpdate,
   ContactCreate,
-  Streets,
-  StreetsCreate,
-  StreetsUpdate,
-  MessageTemplate,
-  MessageTemplateCreate,
-  MessageTemplateUpdate,
-  MessageSend,
-  MessageSendCreate,
-  MessageSendUpdate,
   About,
   AboutCreate,
   AboutUpdate,
@@ -102,25 +93,6 @@ const App = () => {
 
             <PrivateRoute
               restricted={true}
-              component={Streets}
-              path="/streets"
-              exact
-            />
-            <PrivateRoute
-              restricted={true}
-              component={StreetsCreate}
-              path="/streets/create"
-              exact
-            />
-            <PrivateRoute
-              restricted={true}
-              component={StreetsUpdate}
-              path="/streets/:id"
-              exact
-            />
-
-            <PrivateRoute
-              restricted={true}
               component={About}
               path="/about"
               exact
@@ -154,44 +126,6 @@ const App = () => {
               restricted={true}
               component={WorksUpdate}
               path="/works/:id"
-              exact
-            />
-
-            <PrivateRoute
-              restricted={true}
-              component={MessageTemplate}
-              path="/messageTemplate"
-              exact
-            />
-            <PrivateRoute
-              restricted={true}
-              component={MessageTemplateCreate}
-              path="/messageTemplate/create"
-              exact
-            />
-            <PrivateRoute
-              restricted={true}
-              component={MessageTemplateUpdate}
-              path="/messageTemplate/:id"
-              exact
-            />
-
-            <PrivateRoute
-              restricted={true}
-              component={MessageSend}
-              path="/messageSend"
-              exact
-            />
-            <PrivateRoute
-              restricted={true}
-              component={MessageSendCreate}
-              path="/messageSend/create"
-              exact
-            />
-            <PrivateRoute
-              restricted={true}
-              component={MessageSendUpdate}
-              path="/messageSend/:id"
               exact
             />
 
@@ -261,7 +195,7 @@ const App = () => {
               exact
             />
 
-            <Route path="/" exact component={Signup} />
+            <Route path="/" exact component={Login} />
             <Route path="/login" exact component={Login} />
             <Route path="/signup" exact component={Signup} />
           </Switch>

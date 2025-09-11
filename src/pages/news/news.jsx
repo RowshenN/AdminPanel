@@ -21,7 +21,8 @@ const News = () => {
   const [isDelete, setISDelete] = useState(false);
   const [identifier, setIdentifier] = useState(null);
 
-  const { data: news = [], isLoading, refetch } = useGetAllNewsQuery();
+  const { data: rawNews = [], isLoading, refetch } = useGetAllNewsQuery();
+  const news = Array.isArray(rawNews) ? [...rawNews].reverse() : [];
   const [destroyNews] = useDestroyNewsMutation();
 
   const handleDestroy = async () => {

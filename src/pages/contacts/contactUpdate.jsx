@@ -15,8 +15,8 @@ import Modal from "@mui/joy/Modal";
 import Sheet from "@mui/joy/Sheet";
 import PageLoading from "../../components/PageLoading";
 import {
-  useGetTransactionByIdQuery,
-  useDeleteTransactionMutation,
+  useGetAllContactsQuery,
+  useDeleteContactMutation,
 } from "../../services/contact";
 import { message } from "antd";
 import dayjs from "dayjs";
@@ -34,13 +34,13 @@ const TransactionsUpdate = () => {
   const fileRef = useRef(null);
   const [warning, setWarning] = useState(false);
 
-  const [deleteTransaction] = useDeleteTransactionMutation();
+  const [deleteTransaction] = useDeleteContactMutation();
 
   const {
     data: TransactionData,
     isLoading,
     error,
-  } = useGetTransactionByIdQuery(id);
+  } = useGetAllContactsQuery(id);
 
   useEffect(() => {
     if (TransactionData) {

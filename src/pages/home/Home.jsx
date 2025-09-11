@@ -1,12 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 
-import {
-  useGetCustomerAnalyticsQuery,
-  useGetSalesSummaryQuery,
-  useGetTransactionHistorySummaryQuery,
-  useGetTransactionOrderHistoryQuery,
-} from "../../services/reports";
+import { useGetServiceQuery } from "../../services/service.js";
 import dayjs from "dayjs";
 import CustomerDashboard from "./custumersDashboard";
 
@@ -19,17 +14,17 @@ const Home = () => {
     startDate: dayjs(new Date().setDate(1)).format("YYYY-MM-DD"),
     endDate: dayjs().format("YYYY-MM-DD"),
   });
-  const { data: custumersAnalitics } = useGetCustomerAnalyticsQuery();
-  const { data: salesSummary } = useGetSalesSummaryQuery({
+  const { data: custumersAnalitics } = useGetServiceQuery();
+  const { data: salesSummary } = useGetServiceQuery({
     startDate: filter.startDate,
     endDate: filter.endDate,
   });
   // const { data: transactionHistorySummary } =
-  //   useGetTransactionHistorySummaryQuery({
+  //   useGetServiceQuery({
   //     startDate: filter.startDate,
   //     endDate: filter.endDate,
   //   });
-  // const { data: transactionOrderHistory } = useGetTransactionOrderHistoryQuery({
+  // const { data: transactionOrderHistory } = useGetServiceQuery({
   //   startDate: filter.startDate,
   //   endDate: filter.endDate,
   // });

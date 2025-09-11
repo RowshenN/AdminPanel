@@ -129,7 +129,7 @@ const BannerCreate = () => {
           {["tm", "en", "ru"].map((lang) => (
             <div key={lang} className="w-full flex flex-col gap-4">
               <div className="w-full">
-                <h1 className="text-[16px] font-[500]">Banner_{lang} ady</h1>
+                <h1 className="text-[16px] font-[500]">Ady_{lang}</h1>
                 <input
                   type="text"
                   placeholder="Girizilmedik"

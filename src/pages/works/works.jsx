@@ -139,7 +139,14 @@ const Works = () => {
           >
             <div className="w-[8%] min-w-[45px]">
               <h1 className="rounded-[4px] flex items-center justify-center w-[40px] h-[40px] bg-[#F7F8FA]">
-                <img src={process.env.REACT_APP_BASE_URL + item?.img} alt="" />
+                <img
+                  src={
+                    item?.Imgs?.length > 0
+                      ? process.env.REACT_APP_BASE_URL + item.Imgs[0].img
+                      : "fallback-image-url.jpg"
+                  }
+                  alt={item.name_tm}
+                />
               </h1>
             </div>
 

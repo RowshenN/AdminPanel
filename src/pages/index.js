@@ -15,31 +15,9 @@ export const Works = lazy(() => import("./works/works"));
 export const WorksCreate = lazy(() => import("./works/worksCreate"));
 export const WorksUpdate = lazy(() => import("./works/worksUpdate"));
 
-export const Streets = lazy(() => import("./streets/streets"));
-export const StreetsCreate = lazy(() => import("./streets/streetsCreate"));
-export const StreetsUpdate = lazy(() => import("./streets/streetsUpdate"));
-
 export const About = lazy(() => import("./about/abouts"));
 export const AboutCreate = lazy(() => import("./about/aboutCrate"));
 export const AboutUpdate = lazy(() => import("./about/aboutUpdate"));
-
-export const MessageTemplate = lazy(() =>
-  import("./messageTamplate/messageTemplate")
-);
-export const MessageTemplateCreate = lazy(() =>
-  import("./messageTamplate/messageTemplateCreate")
-);
-export const MessageTemplateUpdate = lazy(() =>
-  import("./messageTamplate/messageTemplateUpdate")
-);
-
-export const MessageSend = lazy(() => import("./messageSend/messageSend"));
-export const MessageSendCreate = lazy(() =>
-  import("./messageSend/messageSendCreate")
-);
-export const MessageSendUpdate = lazy(() =>
-  import("./messageSend/messageSendUpdate")
-);
 
 export const Banner = lazy(() => import("./banner/banner"));
 export const BannerUpdate = lazy(() => import("./banner/bannerUpdate"));

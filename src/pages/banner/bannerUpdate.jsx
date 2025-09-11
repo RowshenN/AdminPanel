@@ -34,10 +34,10 @@ const BannerUpdate = () => {
   const [bigPostPicture, setBigPostPicture] = useState(null);
   const [warning, setWarning] = useState(false);
 
-  // Set banner when data loads
+  // Fix: set banner directly from API
   useEffect(() => {
-    if (bannerData?.data) {
-      setBanner(bannerData.data);
+    if (bannerData) {
+      setBanner(bannerData);
     }
   }, [bannerData]);
 
@@ -54,11 +54,12 @@ const BannerUpdate = () => {
     try {
       const formData = new FormData();
       Object.entries(banner).forEach(([key, value]) =>
-        formData.append(key, value)
+        formData.append(key, value ?? "")
       );
+
       if (file) formData.append("img", file);
 
-      await updateBanner({ id: banner.id, formData }).unwrap();
+      await updateBanner(formData).unwrap();
       message.success("Banner üstünlikli üýtgedildi!");
       history.goBack();
     } catch (err) {
@@ -81,7 +82,6 @@ const BannerUpdate = () => {
 
   return (
     <div className="w-full">
-      {/* Warning Alert */}
       {warning && (
         <Alert
           className="!fixed z-50 top-5 right-5"
@@ -108,7 +108,6 @@ const BannerUpdate = () => {
         </Alert>
       )}
 
-      {/* Header */}
       <div className="w-full pb-[30px] flex justify-between items-center">
         <h1 className="text-[30px] font-[700]">Banner Üýtgetmek</h1>
       </div>
@@ -123,8 +122,14 @@ const BannerUpdate = () => {
               type="file"
               ref={fileRef}
               className="hidden"
-              onChange={(e) => setFile(e.target.files[0])}
+              onChange={(e) => {
+                if (e.target.files[0]) {
+                  setFile(e.target.files[0]);
+                  setBigPostPicture(URL.createObjectURL(e.target.files[0]));
+                }
+              }}
             />
+
             {file ? (
               <div className="w-[75px] h-[75px] relative cursor-pointer border-[#98A2B2] rounded-[6px]">
                 <div
@@ -135,6 +140,23 @@ const BannerUpdate = () => {
                 </div>
                 <img
                   src={URL.createObjectURL(file)}
+                  alt="banner"
+                  className="w-[75px] h-[75px] object-cover rounded-[6px]"
+                />
+              </div>
+            ) : banner.img ? (
+              <div className="w-[75px] h-[75px] relative cursor-pointer border-[#98A2B2] rounded-[6px]">
+                <div
+                  onClick={() => setBanner({ ...banner, img: null })}
+                  className="absolute -top-[20px] -right-[20px] w-[30px] h-[30px] p-[1px] rounded-full border-2 bg-gray-100 flex items-center justify-center"
+                >
+                  <CloseRoundedIcon className="w-[16px] h-[16px]" />
+                </div>
+                <img
+                  src={`http://localhost:8080/${banner.img.replace(
+                    /\\/g,
+                    "/"
+                  )}`}
                   alt="banner"
                   className="w-[75px] h-[75px] object-cover rounded-[6px]"
                 />
@@ -159,7 +181,7 @@ const BannerUpdate = () => {
                 <input
                   type="text"
                   placeholder="Girizilmedik"
-                  value={banner[`title_${lang}`]}
+                  value={banner[`title_${lang}`] || ""}
                   onChange={(e) =>
                     setBanner({ ...banner, [`title_${lang}`]: e.target.value })
                   }
@@ -171,7 +193,7 @@ const BannerUpdate = () => {
                 <h1 className="text-[16px] font-[500]">Text_{lang}</h1>
                 <textarea
                   placeholder={`Text_${lang}`}
-                  value={banner[`text_${lang}`]}
+                  value={banner[`text_${lang}`] || ""}
                   onChange={(e) =>
                     setBanner({ ...banner, [`text_${lang}`]: e.target.value })
                   }

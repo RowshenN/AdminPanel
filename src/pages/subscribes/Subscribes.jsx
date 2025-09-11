@@ -5,31 +5,24 @@ import Button from "@mui/joy/Button";
 import Modal from "@mui/joy/Modal";
 import Sheet from "@mui/joy/Sheet";
 import { KeyboardArrowDown, Add } from "@mui/icons-material";
-import CheckBox from "../../components/CheckBox";
-import { axiosInstance } from "../../utils/axiosIntance";
-import { useHistory } from "react-router-dom";
 import Pagination from "../../components/pagination";
 import PageLoading from "../../components/PageLoading";
-
-import userPicture from "../../images/user.png";
-import { useGetFilteredTransactionsQuery } from "../../services/contact";
-import dayjs, { Dayjs } from "dayjs";
-
+import { useHistory } from "react-router-dom";
+import dayjs from "dayjs";
 import { DatePicker } from "antd";
+
+import {
+  useGetAllSubscribesQuery,
+  useDestroySubscribeMutation,
+  useSendToPersonMutation,
+  useSendToPeopleMutation,
+} from "../../services/subscribes";
 
 const Contact = () => {
   const history = useHistory();
-  const [pages, setPages] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [isDelete, setISDelete] = useState(false);
-  const [story, setStory] = useState(null);
-  const [reason, setReason] = useState("");
   const { RangePicker } = DatePicker;
 
-  const [contacts, setContacts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [isError, setIsError] = useState(null);
-
+  const [pages, setPages] = useState([]);
   const [filter, setFilter] = useState({
     page: 1,
     limit: 10,
@@ -41,54 +34,33 @@ const Contact = () => {
   });
 
   const [search, setSearch] = useState("");
+  const [isDelete, setISDelete] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
-  // Fetch contacts
-  const fetchContacts = async () => {
-    setLoading(true);
-    setIsError(null);
+  const [isSendPersonModal, setIsSendPersonModal] = useState(false);
+  const [isSendAllModal, setIsSendAllModal] = useState(false);
 
-    try {
-      const params = {};
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailText, setEmailText] = useState("");
 
-      if (filter.page) params.page = filter.page;
-      if (filter.limit) params.limit = filter.limit;
-      if (filter.name) params.name = filter.name;
-      if (filter.search) params.title = filter.search;
-      if (filter.startDate) params.startDate = filter.startDate;
-      if (filter.endDate) params.endDate = filter.endDate;
-      if (filter.type) params.type = filter.type;
+  const [emailRecipient, setEmailRecipient] = useState("");
 
-      const response = await axiosInstance.get("/api/subscribe/all", {
-        params,
-      });
+  // RTK Query: Get subscribes
+  const {
+    data: rawContactsData,
+    isLoading,
+    refetch,
+  } = useGetAllSubscribesQuery(filter.search);
 
-      setContacts(response.data);
+  const contactsData = Array.isArray(rawContactsData)
+    ? [...rawContactsData].reverse()
+    : [];
 
-      // Optional: handle pagination if your backend sends meta info
-      if (response.data?.meta?.last_page) {
-        const totalPages = response.data.meta.last_page;
-        const arr = Array.from({ length: totalPages }, (_, i) => i + 1);
-        setPages(arr);
-      }
-    } catch (err) {
-      console.error(err);
-      setIsError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [destroySubscribe] = useDestroySubscribeMutation();
+  const [sendToPerson] = useSendToPersonMutation();
+  const [sendToPeople] = useSendToPeopleMutation();
 
-  // Fetch contacts on mount and whenever filter changes
-  useEffect(() => {
-    fetchContacts();
-  }, [filter]);
-
-  // if (loading) return <PageLoading />;
-
-  // const { data, error, isLoading } = useGetFilteredTransactionsQuery({
-  //   name: filter.name,
-  // });
-
+  // Handle search debounce
   useEffect(() => {
     const time = setTimeout(() => {
       setFilter({ ...filter, search: search });
@@ -96,77 +68,69 @@ const Contact = () => {
     return () => clearTimeout(time);
   }, [search]);
 
-  // if (isError) {
-  //   return <div>Ýalňyşlyk boldy</div>;
-  // }
-
-  // useEffect(() => {
-  //   const time = setTimeout(() => {
-  //     getcomments();
-  //   }, 400);
-
-  //   return () => clearTimeout(time);
-  // }, [filter]);
-
-  // useEffect(() => {
-  //   getcomments();
-  // }, [filter]);
-
-  // const getcomments = () => {
-  //   setLoading(true);
-  //   axiosInstance
-  //     .get(
-  //       "/api/transaction/all/filters?page=2&limit=5&startDate=2025-06-20&endDate=2025-07-05"
-  //     )
-  //     .then((data) => {
-  //       setLoading(false);
-  //       console.log(data.data);
-  //       setTransactions(data.data);
-  //       let i = 1;
-  //       let array = [];
-  //       while (i <= data?.data?.meta?.last_page) {
-  //         array.push(i);
-  //         i++;
-  //       }
-  //       setPages([...array]);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setLoading(false);
-  //     });
-  // };
-
-  console.log("contacts:  ", contacts);
-
-  const deletecomments = () => {
-    //   reason?.length > 0 &&
-    //     axiosInstance
-    //       .post("/transactions/decline/" + story?.id, {
-    //         reason: reason,
-    //       })
-    //       .then((data) => {
-    //         console.log(data.data);
-    //         getcomments();
-    //         setISDelete(false);
-    //         setReason("");
-    //       })
-    //       .catch((err) => {
-    //         console.log(err);
-    //       });
+  const handleDelete = async () => {
+    if (selectedId) {
+      try {
+        await destroySubscribe(selectedId).unwrap();
+        setISDelete(false);
+        setSelectedId(null);
+        refetch();
+      } catch (err) {
+        console.error(err);
+      }
+    }
   };
+
+  const handleSendPerson = async () => {
+    try {
+      await sendToPerson({
+        email: emailRecipient,
+        subject: emailSubject,
+        text: emailText,
+      }).unwrap();
+      setIsSendPersonModal(false);
+      setEmailSubject("");
+      setEmailText("");
+      setEmailRecipient("");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSendAll = async () => {
+    try {
+      await sendToPeople({
+        subject: emailSubject,
+        text: emailText,
+      }).unwrap();
+      setIsSendAllModal(false);
+      setEmailSubject("");
+      setEmailText("");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Optional: handle pagination if needed
+  useEffect(() => {
+    if (contactsData?.length) {
+      const totalPages = Math.ceil(contactsData.length / filter.limit);
+      setPages(Array.from({ length: totalPages }, (_, i) => i + 1));
+    }
+  }, [contactsData, filter.limit]);
+
+  if (isLoading) return <PageLoading />;
 
   return (
     <div className="w-full">
       {/* header section */}
       <div className="w-full pb-[15px] flex justify-between items-center">
-        <h1 className="text-[30px] font-[700]">Contact</h1>
+        <h1 className="text-[30px] font-[700]">Subscribe</h1>
         <div className="w-fit flex gap-5">
-          {/* cashback */}
-          {/* payment */}
           <Select
             onChange={(e, value) => setFilter({ ...filter, type: value })}
             placeholder="Hemmesini görkez"
-            className="!border-[#E9EBF0] !border-[1px] !h-[40px] !bg-white !rounded-[8px] !px-[17px] !w-fit !min-w-[200px] !text-[14px] !text-black  "
+            className="!border-[#E9EBF0] !border-[1px] !h-[40px] !bg-white !rounded-[8px] !px-[17px] !w-fit !min-w-[200px] !text-[14px] !text-black"
             indicator={<KeyboardArrowDown className="!text-[16px]" />}
             sx={{
               [`& .${selectClasses.indicator}`]: {
@@ -181,72 +145,38 @@ const Contact = () => {
             <Option value="payment">Töleg görä</Option>
             <Option value="cashback">cashback göra</Option>
           </Select>
+
           <RangePicker
-            // locale={tkTK}
-            // presets={rangePresets}
-            // defaultValue={[
-            //   dayjs(filter?.startDate, "DD-MM-YYYY"),
-            //   dayjs(filter?.endDate, "DD-MM-YYYY"),
-            // ]}
             value={[
-              dayjs(filter.startDate, "DD-MM-YYYY"),
-              dayjs(filter.endDate, "DD-MM-YYYY"),
+              dayjs(filter.startDate, "YYYY-MM-DD"),
+              dayjs(filter.endDate, "YYYY-MM-DD"),
             ]}
             onChange={(a, b) => {
               b[0] &&
                 b[1] &&
                 setFilter({
                   ...filter,
-                  startDate: dayjs(b[0], "DD-MM-YYYY"),
-                  endDate: dayjs(b[1], "DD-MM-YYYY"),
+                  startDate: dayjs(b[0]).format("YYYY-MM-DD"),
+                  endDate: dayjs(b[1]).format("YYYY-MM-DD"),
                 });
-              // b[1] && setEndTime(dayjs(b[1], "DD-MM-YYYY"));
             }}
             format={"DD-MM-YYYY"}
           />
-          {/* <Button
-            onClick={() => history.push({ pathname: "/contact/create" })}
-            className="  !h-[40px] !bg-blue !rounded-[8px] !px-[17px] !w-fit   !text-[14px] !text-white  "
-            startDecorator={<Add />}
+
+          {/* Send to All Button */}
+          <Button
+            onClick={() => setIsSendAllModal(true)}
+            className="!h-[40px] !bg-green-600 !rounded-[8px] !px-[17px] !w-fit !text-[14px] !text-white"
           >
-            Contact döret
-          </Button> */}
-          {/* <button className="h-[40px] border-[#E9EBF0] border-[1px] rounded-[8px]"></button> */}
+            Send to All
+          </Button>
         </div>
       </div>
 
-      {/*  Table*/}
+      {/* Table */}
       <div className="w-full p-5 bg-white rounded-[8px]">
         {/* Table search */}
         <div className="w-full mb-4 flex items-center px-4 h-[40px] rounded-[6px] border-[1px] border-[#E9EBF0]">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g clipPath="url(#clip0_0_1937)">
-              <circle
-                cx="7.66683"
-                cy="7.66659"
-                r="6.33333"
-                stroke="#C7CED9"
-                strokeWidth="2"
-              />
-              <path
-                d="M12.3335 12.3333L14.6668 14.6666"
-                stroke="#C7CED9"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_0_1937">
-                <rect width="16" height="16" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -255,12 +185,12 @@ const Contact = () => {
             placeholder="Gözleg"
           />
         </div>
+
         {/* Table header */}
         <div className="w-full gap-[20px] flex items-center px-4 h-[40px] rounded-[6px] bg-[#F7F8FA]">
           <h1 className="text-[14px] whitespace-nowrap font-[500] text-[#98A2B2] w-[25%] uppercase">
             Name
           </h1>
-
           <h1 className="text-[14px] font-[500] text-[#98A2B2] w-[35%] uppercase">
             E-mail
           </h1>
@@ -268,54 +198,92 @@ const Contact = () => {
 
         {/* Table body */}
         <div className="w-full flex flex-wrap">
-          {contacts?.map((item, i) => {
-            return loading ? (
-              <PageLoading />
-            ) : (
-              <div
-                key={"categoryItem" + i}
-                className="w-full gap-[20px] flex items-center px-4 h-[70px] rounded-[6px] bg-white border-b-[1px] border-[#E9EBF0]"
-              >
-                <h1 className="text-[14px] font-[500] text-black w-[25%] uppercase">
-                  {item?.name}
-                </h1>
+          {contactsData?.map((item, i) => (
+            <div
+              key={"subscribe" + i}
+              className="w-full gap-[20px] flex items-center px-4 h-[70px] rounded-[6px] bg-white border-b-[1px] border-[#E9EBF0]"
+            >
+              <h1 className="text-[14px] font-[500] text-black w-[25%] ">
+                {item?.name}
+              </h1>
 
-                <h1 className="text-[14px] font-[500] text-black w-[35%] uppercase">
-                  {item?.email}
-                </h1>
+              <h1 className="text-[14px] font-[500] text-black w-[55%] ">
+                {item?.email}
+              </h1>
 
-                <h1 className="text-[14px] flex items-center justify-between gap-2 font-[500] text-[#98A2B2] w-[20%]   uppercase">
-                  <div
-                    onClick={() =>
-                      history.push({ pathname: "/contact/" + item?.id })
-                    }
-                    className="cursor-pointer p-2"
+              <h1 className="text-[14px] flex items-center justify-center gap-5 font-[500] text-[#98A2B2] w-[20%] ">
+                <div
+                  // onClick={() =>
+                  //   history.push({ pathname: "/contact/" + item?.id })
+                  // }
+                  className="cursor-pointer p-2"
+                >
+                  <svg
+                    width="3"
+                    height="15"
+                    viewBox="0 0 3 15"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <svg
-                      width="3"
-                      height="15"
-                      viewBox="0 0 3 15"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle cx="1.5" cy="1.5" r="1.5" fill="black" />
-                      <circle cx="1.5" cy="7.5" r="1.5" fill="black" />
-                      <circle cx="1.5" cy="13.5" r="1.5" fill="black" />
-                    </svg>
-                  </div>
-                </h1>
-              </div>
-            );
-          })}
-        </div>
-        {/* Table footer */}
+                    <circle cx="1.5" cy="1.5" r="1.5" fill="black" />
+                    <circle cx="1.5" cy="7.5" r="1.5" fill="black" />
+                    <circle cx="1.5" cy="13.5" r="1.5" fill="black" />
+                  </svg>
+                </div>
 
+                {/* Send to person */}
+                <div
+                  onClick={() => {
+                    setSelectedId(item.id);
+                    setEmailRecipient(item.email);
+                    setIsSendPersonModal(true);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="blue"
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                  >
+                    <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
+                  </svg>
+                </div>
+
+                {/* Trash */}
+                <div
+                  onClick={() => {
+                    setISDelete(true);
+                    setSelectedId(item.id);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="red"
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                  >
+                    <path d="M9 3V4H4V6H5V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V6H20V4H15V3H9ZM7 6H17V20H7V6Z" />
+                    <path d="M9 8H11V18H9V8ZM13 8H15V18H13V8Z" />
+                  </svg>
+                </div>
+              </h1>
+            </div>
+          ))}
+        </div>
+
+        {/* Table footer */}
         <div className="w-full bg-white p-4 rounded-[8px] flex mt-5 justify-between items-center">
-          <h1 className="text-[14px] font-[400]">{contacts?.total} Contact</h1>
+          <h1 className="text-[14px] font-[400]">
+            {contactsData?.length} Subscribers
+          </h1>
           <Pagination
-            meta={contacts}
+            meta={contactsData}
             pages={pages}
-            length={contacts?.length}
+            length={contactsData?.length}
             pageNo={filter.page}
             next={() => setFilter({ ...filter, page: filter.page + 1 })}
             prev={() => setFilter({ ...filter, page: filter.page - 1 })}
@@ -323,7 +291,7 @@ const Contact = () => {
           />
         </div>
 
-        {/* Selected items delete */}
+        {/* Delete Modal */}
         <Modal
           aria-labelledby="modal-title"
           aria-describedby="modal-desc"
@@ -337,17 +305,10 @@ const Contact = () => {
         >
           <Sheet
             variant="outlined"
-            sx={{
-              maxWidth: 700,
-              borderRadius: "md",
-              p: 3,
-              boxShadow: "lg",
-            }}
+            sx={{ maxWidth: 500, borderRadius: "md", p: 3, boxShadow: "lg" }}
           >
-            <div className="flex w-[500px] border-b-[1px] border-[#E9EBF0] pb-5 justify-between items-center">
-              <h1 className="text-[20px] font-[500]">
-                Teswiriň aýyrylmagynyň sebäbi
-              </h1>
+            <div className="flex w-[350px] border-b-[1px] border-[#E9EBF0] pb-5 justify-between items-center">
+              <h1 className="text-[20px] font-[500]">Subscribe aýyrmak</h1>
               <button onClick={() => setISDelete(false)}>
                 <svg
                   width="16"
@@ -366,21 +327,12 @@ const Contact = () => {
               </button>
             </div>
 
-            <div className="mt-5">
-              <h1 className="text-[16px] text-left  mb-1 font-[400]">
-                Düşündiriş
+            <div>
+              <h1 className="text-[16px] text-center my-10 font-[400]">
+                Subscribe aýyrmak isleýärsiňizmi?
               </h1>
-              <textarea
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                className="min-h-[100px] border-[1px] border-[#98A2B2] rounded-[6px] outline-none p-2 w-full"
-                name=""
-                id=""
-                cols="30"
-                rows="10"
-              ></textarea>
 
-              <div className="flex mt-5 gap-[29px] justify-end">
+              <div className="flex gap-[29px] justify-center">
                 <button
                   onClick={() => setISDelete(false)}
                   className="text-[14px] font-[500] px-6 py-3 text-[#98A2B2] rounded-[8px] hover:bg-blue hover:text-white"
@@ -388,12 +340,113 @@ const Contact = () => {
                   Goýbolsun et
                 </button>
                 <button
-                  onClick={() => deletecomments()}
+                  onClick={handleDelete}
                   className="text-[14px] font-[500] text-white hover:bg-[#fd6060] bg-[#FF4D4D] rounded-[8px] px-6 py-3"
                 >
                   Aýyr
                 </button>
               </div>
+            </div>
+          </Sheet>
+        </Modal>
+
+        {/* Send to Person Modal */}
+        <Modal
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          open={isSendPersonModal}
+          onClose={() => setIsSendPersonModal(false)}
+        >
+          <Sheet
+            variant="outlined"
+            sx={{ maxWidth: 700, borderRadius: "md", p: 3, boxShadow: "lg" }}
+          >
+            <h1 className="text-[20px] font-[500] mb-4">Send to Person</h1>
+
+            {/* Autofilled Email Field */}
+            <input
+              type="text"
+              value={emailRecipient}
+              readOnly
+              className="w-full outline-none mb-2 p-2 border rounded bg-gray-100"
+            />
+
+            <input
+              type="text"
+              placeholder="Subject"
+              value={emailSubject}
+              onChange={(e) => setEmailSubject(e.target.value)}
+              className="w-full outline-none mb-2 p-2 border rounded"
+            />
+            <textarea
+              placeholder="Text"
+              value={emailText}
+              onChange={(e) => setEmailText(e.target.value)}
+              className="w-full outline-none mb-2 p-2 border rounded"
+              rows={4}
+            />
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setIsSendPersonModal(false)}
+                className="px-6 py-2 rounded border"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSendPerson}
+                className="px-6 py-2 rounded bg-blue text-white"
+              >
+                Send
+              </button>
+            </div>
+          </Sheet>
+        </Modal>
+
+        {/* Send to All Modal */}
+        <Modal
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          open={isSendAllModal}
+          onClose={() => setIsSendAllModal(false)}
+        >
+          <Sheet
+            variant="outlined"
+            sx={{ maxWidth: 700, borderRadius: "md", p: 3, boxShadow: "lg" }}
+          >
+            <h1 className="text-[20px] font-[500] mb-4">Send to All</h1>
+            <input
+              type="text"
+              placeholder="Subject"
+              value={emailSubject}
+              onChange={(e) => setEmailSubject(e.target.value)}
+              className="w-full outline-none mb-2 p-2 border rounded"
+            />
+            <textarea
+              placeholder="Text"
+              value={emailText}
+              onChange={(e) => setEmailText(e.target.value)}
+              className="w-full outline-none mb-2 p-2 border rounded"
+              rows={4}
+            />
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setIsSendAllModal(false)}
+                className="px-6 py-2 rounded border"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSendAll}
+                className="px-6 py-2 rounded bg-blue text-white"
+              >
+                Send
+              </button>
             </div>
           </Sheet>
         </Modal>
